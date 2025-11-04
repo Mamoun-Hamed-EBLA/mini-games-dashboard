@@ -34,32 +34,9 @@ body {
   margin: 0;
 }
 
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
+/* Light surface accents */
+.mat-app-background { background: transparent; }
 
-html {
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: Roboto,
-    density: 0,
-  ));
-}
-
-body {
-  // Gaming look: dark scheme
-  color-scheme: dark;
-  background-color: #0b1020;
-  background-image: radial-gradient(ellipse at top left, rgba(124,58,237,0.25), transparent 60%),
-                    radial-gradient(ellipse at bottom right, rgba(16,185,129,0.2), transparent 60%);
-  font: var(--mat-sys-body-medium);
-  margin: 0;
-}
 /* You can add global styles to this file, and also import other style files */
 
 html, body {
@@ -69,13 +46,8 @@ html, body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: #e2e8f0;
+  color: var(--mat-sys-on-surface);
 }
-
-.mat-app-background {
-  background: transparent;
-}
-
 /* Utility */
 .full-width { width: 100%; }
 .text-center { text-align: center; }

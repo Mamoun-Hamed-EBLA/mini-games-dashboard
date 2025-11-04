@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { AuthService } from '../../core/auth/auth.service';
+import { NotificationService } from '../../core/notifications/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -10,7 +11,7 @@ import { AuthService } from '../../core/auth/auth.service';
   imports: [SharedModule, ReactiveFormsModule, RouterLink],
   template: `
     <div class="login-wrapper">
-      <mat-card class="login-card mat-elevation-z4">
+      <mat-card class="login-card mat-elevation-z8">
         <mat-card-header>
           <mat-card-title>
             <mat-icon>lock</mat-icon>
@@ -27,7 +28,7 @@ import { AuthService } from '../../core/auth/auth.service';
               <mat-label>Password</mat-label>
               <input matInput type="password" formControlName="password" placeholder="••••••" />
             </mat-form-field>
-            <button mat-flat-button color="primary" class="full-width" [disabled]="form.invalid || loading">
+            <button mat-flat-button color="primary" class="full-width action" [disabled]="form.invalid || loading">
               <mat-progress-spinner *ngIf="loading" mode="indeterminate" diameter="18"></mat-progress-spinner>
               <span *ngIf="!loading">Login</span>
             </button>
@@ -40,10 +41,14 @@ import { AuthService } from '../../core/auth/auth.service';
     </div>
   `,
   styles: [
-    `.login-wrapper{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
-     .login-card{width:100%;max-width:420px;}
-     .form{display:flex;flex-direction:column;gap:16px;}
-     .full-width{width:100%;}`
+    `.login-wrapper{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:
+        radial-gradient(600px 200px at 20% -10%, rgba(37,99,235,.08), transparent),
+        radial-gradient(600px 200px at 80% 110%, rgba(16,185,129,.06), transparent);
+     }
+     .login-card{width:100%;max-width:420px;border-radius:14px;}
+     .form{display:flex;flex-direction:column;gap:16px;margin-top:8px;}
+     .full-width{width:100%;}
+     .action{height:44px;display:flex;align-items:center;justify-content:center;gap:8px;}`
   ]
 })
 export class LoginComponent {
@@ -51,6 +56,7 @@ export class LoginComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private notify = inject(NotificationService);
 
   loading = false;
 
@@ -68,7 +74,7 @@ export class LoginComponent {
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
         this.router.navigateByUrl(returnUrl);
       },
-      error: () => { this.loading = false; },
+      error: (err: any) => { this.loading = false; this.notify.error(err?.message || 'Login failed'); },
       complete: () => { this.loading = false; }
     });
   }

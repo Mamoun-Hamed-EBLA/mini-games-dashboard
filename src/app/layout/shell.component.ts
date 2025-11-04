@@ -63,11 +63,11 @@ import { AuthService } from '../core/auth/auth.service';
   `,
   styles: [
     `.container{height:100vh;}
-     .toolbar{position:sticky; top:0; z-index:1; background: linear-gradient(90deg, #1f2937, #0f172a); color: #e2e8f0;}
+     .toolbar{position:sticky; top:0; z-index:1; background: var(--mat-sys-primary-container); color: var(--mat-sys-on-primary-container);} 
      .content{padding:16px;}
      .spacer{flex:1 1 auto;}
      .menu-btn{display:none;}
-     .brand{display:flex; align-items:center; gap:8px; padding:16px; font-weight:600; color:#e2e8f0;}
+     .brand{display:flex; align-items:center; gap:8px; padding:16px; font-weight:600; color: var(--mat-sys-on-surface);} 
      @media (max-width: 960px){
        .menu-btn{display:inline-flex;}
      }`
