@@ -33,7 +33,9 @@ import { SharedModule } from '../../shared/shared.module';
   styles: [
     `.dashboard{ display:flex; flex-direction:column; gap:16px; }
      .cards{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:16px; }
-     .stat h2{ margin:0; }`
+     .stat{ position:relative; overflow:hidden; border:1px solid var(--app-border); background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01)); }
+     .stat mat-card-title{ color:#cbd5e1; font-weight:600; }
+     .stat h2{ margin:0; font-weight:800; letter-spacing:.4px; background: linear-gradient(90deg, #c084fc, #60a5fa); -webkit-background-clip: text; background-clip: text; color: transparent; }`
   ]
 })
 export class DashboardComponent {

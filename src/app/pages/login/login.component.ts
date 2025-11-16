@@ -1,9 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject, signal, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { AuthService } from '../../core/auth/auth.service';
 import { NotificationService } from '../../core/notifications/notification.service';
+import { ShortcutService } from '../../core/services/shortcut.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -28,9 +30,12 @@ import { NotificationService } from '../../core/notifications/notification.servi
               <mat-label>Password</mat-label>
               <input matInput type="password" formControlName="password" placeholder="••••••" />
             </mat-form-field>
-            <button mat-flat-button color="primary" class="full-width action" [disabled]="form.invalid || loading">
-              <mat-progress-spinner *ngIf="loading" mode="indeterminate" diameter="18"></mat-progress-spinner>
-              <span *ngIf="!loading">Login</span>
+            <button mat-flat-button color="primary" class="full-width action" type="submit">
+              @if (loading()) {
+                <mat-progress-spinner mode="indeterminate" diameter="18"></mat-progress-spinner>
+              } @else {
+                <span>Login</span>
+              }
             </button>
           </form>
         </mat-card-content>
@@ -51,14 +56,16 @@ import { NotificationService } from '../../core/notifications/notification.servi
      .action{height:44px;display:flex;align-items:center;justify-content:center;gap:8px;}`
   ]
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private notify = inject(NotificationService);
+  private shortcuts = inject(ShortcutService);
 
-  loading = false;
+  loading = signal(false);
+  private destroy$ = new Subject<void>();
 
   form = this.fb.group({
     username: ['', Validators.required],
@@ -66,16 +73,40 @@ export class LoginComponent {
   });
 
   submit() {
-    if (this.form.invalid || this.loading) return;
+    if (this.form.invalid || this.loading()) return;
     const { username, password } = this.form.value as { username: string; password: string };
-    this.loading = true;
-    this.auth.login(username, password).subscribe({
-      next: () => {
-        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
-        this.router.navigateByUrl(returnUrl);
-      },
-      error: (err: any) => { this.loading = false; this.notify.error(err?.message || 'Login failed'); },
-      complete: () => { this.loading = false; }
-    });
+    this.loading.set(true);
+    this.form.disable();
+    this.auth.login(username, password)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
+          this.router.navigateByUrl(returnUrl);
+        },
+        error: (err: any) => {
+          this.loading.set(false);
+          this.form.enable();
+          this.notify.error(err?.message || 'Login failed');
+        },
+        complete: () => {
+          this.loading.set(false);
+          this.form.enable();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onKeydown(e: KeyboardEvent) {
+    if (e.key === 'F1') {
+      e.preventDefault();
+      this.shortcuts.markApiKeyRouteRequested();
+      this.router.navigateByUrl('/apikey-login');
+    }
   }
 }

@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { Subscription } from 'rxjs';
 
 export interface FormFieldOption {
   label: string;
@@ -24,6 +25,7 @@ export interface FormFieldConfig {
   type: FieldType;
   placeholder?: string;
   options?: FormFieldOption[]; // for select fields
+  enumType?: any; // for select fields: pass a TS enum, show names as labels and numeric values
   required?: boolean;
   defaultValue?: any;
   visible?: boolean | ((formValue: Record<string, any>) => boolean);
@@ -45,7 +47,7 @@ export interface FormFieldConfig {
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    NgSelectModule,
     MatCheckboxModule,
     MatButtonModule,
     MatRadioModule,
@@ -56,63 +58,88 @@ export interface FormFieldConfig {
   template: `
     <form class="dynamic-form" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="grid" [style.grid-template-columns]="'repeat(' + cols + ', minmax(0,1fr))'">
-      <ng-container *ngFor="let field of config">
-        <ng-container *ngIf="computeVisible(field)" [ngSwitch]="field.type">
-          <div class="grid-item" [style.grid-column]="'span ' + (field.colSpan || 1)">
-          <mat-form-field *ngSwitchCase="'text'" appearance="outline" class="full-width">
-            <mat-label>{{ field.label }}</mat-label>
-            <input matInput [formControlName]="field.name" [disabled]="computeDisabled(field)" />
-            <mat-hint *ngIf="field.hint">{{ field.hint }}</mat-hint>
-          </mat-form-field>
+        @for (fieldConfig of normalizedConfig; track fieldConfig.name) {
+          @if (computeVisible(fieldConfig)) {
+            <div class="grid-item" [style.grid-column]="'span ' + (fieldConfig.colSpan || 1)">
+              @switch (fieldConfig.type) {
 
-          <mat-form-field *ngSwitchCase="'number'" appearance="outline" class="full-width">
-            <mat-label>{{ field.label }}</mat-label>
-            <input matInput type="number" [formControlName]="field.name" [disabled]="computeDisabled(field)" />
-            <mat-hint *ngIf="field.hint">{{ field.hint }}</mat-hint>
-          </mat-form-field>
+                @case ('text') {
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ fieldConfig.label }}</mat-label>
+                    <input matInput [formControlName]="fieldConfig.name" />
+                    <mat-hint *ngIf="fieldConfig.hint">{{ fieldConfig.hint }}</mat-hint>
+                  </mat-form-field>
+                }
 
-          <mat-form-field *ngSwitchCase="'password'" appearance="outline" class="full-width">
-            <mat-label>{{ field.label }}</mat-label>
-            <input matInput type="password" [formControlName]="field.name" [disabled]="computeDisabled(field)" />
-          </mat-form-field>
+                @case ('number') {
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ fieldConfig.label }}</mat-label>
+                    <input matInput type="number" [formControlName]="fieldConfig.name" />
+                    <mat-hint *ngIf="fieldConfig.hint">{{ fieldConfig.hint }}</mat-hint>
+                  </mat-form-field>
+                }
 
-          <mat-form-field *ngSwitchCase="'email'" appearance="outline" class="full-width">
-            <mat-label>{{ field.label }}</mat-label>
-            <input matInput type="email" [formControlName]="field.name" [disabled]="computeDisabled(field)" />
-          </mat-form-field>
+                @case ('password') {
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ fieldConfig.label }}</mat-label>
+                    <input matInput type="password" [formControlName]="fieldConfig.name" />
+                  </mat-form-field>
+                }
 
-          <mat-form-field *ngSwitchCase="'select'" appearance="outline" class="full-width">
-            <mat-label>{{ field.label }}</mat-label>
-            <mat-select [formControlName]="field.name" [multiple]="field.multiple" [disabled]="computeDisabled(field)">
-              <mat-option *ngFor="let opt of field.options || []" [value]="opt.value">{{ opt.label }}</mat-option>
-            </mat-select>
-          </mat-form-field>
+                @case ('email') {
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ fieldConfig.label }}</mat-label>
+                    <input matInput type="email" [formControlName]="fieldConfig.name" />
+                  </mat-form-field>
+                }
 
-          <mat-checkbox *ngSwitchCase="'checkbox'" [formControlName]="field.name" [disabled]="computeDisabled(field)">{{ field.label }}</mat-checkbox>
+                @case ('select') {
+                  <div class="full-width ng-select-wrapper">
+                    <label class="ng-select-label">{{ fieldConfig.label }}</label>
+                    <ng-select
+                      [items]="fieldConfig.options || []"
+                      bindLabel="label"
+                      bindValue="value"
+                      [multiple]="fieldConfig.multiple"
+                      [placeholder]="fieldConfig.placeholder || 'Select'"
+                      [formControlName]="fieldConfig.name">
+                    </ng-select>
+                  </div>
+                }
 
-          <mat-radio-group *ngSwitchCase="'radio'" [formControlName]="field.name" class="radio-group">
-            <mat-radio-button *ngFor="let opt of field.options || []" [value]="opt.value">{{ opt.label }}</mat-radio-button>
-          </mat-radio-group>
+                @case ('checkbox') {
+                  <mat-checkbox [formControlName]="fieldConfig.name">{{ fieldConfig.label }}</mat-checkbox>
+                }
 
-          <mat-slide-toggle *ngSwitchCase="'toggle'" [formControlName]="field.name">{{ field.label }}</mat-slide-toggle>
+                @case ('radio') {
+                  <mat-radio-group [formControlName]="fieldConfig.name" class="radio-group">
+                    <mat-radio-button *ngFor="let option of fieldConfig.options || []" [value]="option.value">{{ option.label }}</mat-radio-button>
+                  </mat-radio-group>
+                }
 
-          <mat-form-field *ngSwitchCase="'date'" appearance="outline" class="full-width">
-            <mat-label>{{ field.label }}</mat-label>
-            <input matInput [matDatepicker]="picker" [formControlName]="field.name" [disabled]="computeDisabled(field)" />
-            <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
+                @case ('toggle') {
+                  <mat-slide-toggle [formControlName]="fieldConfig.name">{{ fieldConfig.label }}</mat-slide-toggle>
+                }
 
-          <mat-form-field *ngSwitchCase="'textarea'" appearance="outline" class="full-width">
-            <mat-label>{{ field.label }}</mat-label>
-            <textarea matInput rows="4" [formControlName]="field.name" [disabled]="computeDisabled(field)"></textarea>
-          </mat-form-field>
-          </div>
-        </ng-container>
-      </ng-container>
-      </div>
+                @case ('date') {
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ fieldConfig.label }}</mat-label>
+                    <input matInput [matDatepicker]="picker" [formControlName]="fieldConfig.name" />
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                }
 
-      <div class="actions">
-        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">{{ submitLabel }}</button>
+                @case ('textarea') {
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ fieldConfig.label }}</mat-label>
+                    <textarea matInput rows="4" [formControlName]="fieldConfig.name"></textarea>
+                  </mat-form-field>
+                }
+
+              }
+            </div>
+          }
+        }
       </div>
     </form>
   `,
@@ -122,9 +149,10 @@ export interface FormFieldConfig {
     `.full-width{ width:100%; }`,
     `.actions{ display:flex; justify-content:flex-end; }`,
     `.radio-group{ display:flex; gap:16px; flex-wrap: wrap; }`,
+   
   ]
 })
-export class DynamicFormComponent implements OnChanges {
+export class DynamicFormComponent implements OnChanges, OnDestroy {
   @Input() config: FormFieldConfig[] = [];
   @Input() submitLabel = 'Save';
   @Input() value: Record<string, any> | null = null;
@@ -132,24 +160,34 @@ export class DynamicFormComponent implements OnChanges {
   @Output() submitted = new EventEmitter<Record<string, any>>();
 
   form = new FormGroup<Record<string, FormControl>>({});
+  private formValueChangesSub?: Subscription;
+  normalizedConfig: FormFieldConfig[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['config']) {
+      this.normalizedConfig = (this.config || []).map(fieldConfig => this.normalizeField(fieldConfig));
       this.form = new FormGroup(
-        this.config.reduce((acc, field) => {
+        this.normalizedConfig.reduce((acc, field) => {
           const validators = this.buildValidators(field);
           const initial = this.value?.[field.name] ?? (field.defaultValue ?? this.defaultValue(field));
           acc[field.name] = new FormControl(initial, validators);
-          if (this.computeDisabled(field)) {
-            acc[field.name].disable({ emitEvent: false });
-          }
           return acc;
         }, {} as Record<string, FormControl>)
       );
+      this.formValueChangesSub?.unsubscribe();
+      this.applyDisabledRules();
+      this.formValueChangesSub = this.form.valueChanges.subscribe(() => {
+        this.applyDisabledRules();
+      });
     }
     if (changes['value'] && this.value) {
       this.form.patchValue(this.value);
+      this.applyDisabledRules();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.formValueChangesSub?.unsubscribe();
   }
 
   defaultValue(field: FormFieldConfig) {
@@ -191,11 +229,37 @@ export class DynamicFormComponent implements OnChanges {
     return !!rule;
   }
 
+  private applyDisabledRules(): void {
+    (this.normalizedConfig || []).forEach(fieldConfig => {
+      const control = this.form.get(fieldConfig.name);
+      if (!control) {
+        return;
+      }
+
+      const shouldDisable = this.computeDisabled(fieldConfig);
+      if (shouldDisable && control.enabled) {
+        control.disable({ emitEvent: false });
+      } else if (!shouldDisable && control.disabled) {
+        control.enable({ emitEvent: false });
+      }
+    });
+  }
+
   onSubmit() {
     if (this.form.valid) {
       this.submitted.emit(this.form.value);
     } else {
       this.form.markAllAsTouched();
     }
+  }
+
+  private normalizeField(field: FormFieldConfig): FormFieldConfig {
+    if ((field.type === 'select' || field.type === 'radio') && !field.options && field.enumType) {
+      const e = field.enumType;
+      const names = Object.keys(e).filter(k => isNaN(Number(k)));
+      const options = names.map(name => ({ label: name.replace(/_/g, ' '), value: Number(e[name]) }));
+      return { ...field, options };
+    }
+    return field;
   }
 }

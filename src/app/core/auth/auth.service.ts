@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '../models/api-response.model';
@@ -11,11 +11,20 @@ export class AuthService {
   private readonly tokenKey = 'auth_token';
   private readonly rolesKey = 'auth_roles';
   private readonly tenantKey = 'auth_tenant';
+  private readonly apiKeyKey = 'auth_api_key';
 
   constructor(private router: Router, private http: HttpClient) {}
 
   isAuthenticated(): boolean {
     return !!this.getToken();
+  }
+
+  isApiKeyAuthenticated(): boolean {
+    return !!this.getApiKey();
+  }
+
+  isAnyAuthenticated(): boolean {
+    return this.isAuthenticated() || this.isApiKeyAuthenticated();
   }
 
   getToken(): string | null {
@@ -36,6 +45,10 @@ export class AuthService {
 
   getTenantId(): string | null {
     return localStorage.getItem(this.tenantKey);
+  }
+
+  getApiKey(): string | null {
+    return localStorage.getItem(this.apiKeyKey);
   }
 
   private decodeJwtPayload(token: string): any | null {
@@ -72,15 +85,30 @@ export class AuthService {
           const role = payload?.role;
           const roles = Array.isArray(role) ? role : role ? [role] : [];
           localStorage.setItem(this.rolesKey, JSON.stringify(roles));
+          // Ensure API key mode is cleared when logging in with token
+          localStorage.removeItem(this.apiKeyKey);
           return true;
         })
       );
+  }
+
+  loginWithApiKey(apiKey: string): Observable<boolean> {
+    return of(true).pipe(
+      tap(() => {
+        // Clear token-based session when switching to API key mode
+        localStorage.removeItem(this.tokenKey);
+        localStorage.removeItem(this.rolesKey);
+        localStorage.removeItem(this.tenantKey);
+        localStorage.setItem(this.apiKeyKey, apiKey);
+      })
+    );
   }
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.rolesKey);
     localStorage.removeItem(this.tenantKey);
+    localStorage.removeItem(this.apiKeyKey);
     this.router.navigateByUrl('/login');
   }
 }

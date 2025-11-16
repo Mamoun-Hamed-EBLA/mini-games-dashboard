@@ -25,9 +25,10 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   const headers: Record<string, string> = {
-    'X-Api-Key': environment.apiKey,
     'X-Tenant-Id': auth.getTenantId() || environment.defaultTenantId,
   };
+  const apiKey = auth.getApiKey();
+  if (apiKey) headers['X-Api-Key'] = apiKey;
 
   const cloned = req.clone({ url, setHeaders: headers });
   return next(cloned);

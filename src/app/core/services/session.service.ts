@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
-import { GameSession, GameStatus } from '../models/session.model';
+import { GameSession } from '../models/session.model';
+import { GameStatus } from '../enums/GameStatus';
 
 function genId() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -14,7 +15,7 @@ function genId() {
 @Injectable({ providedIn: 'root' })
 export class SessionService {
   private readonly state$ = new BehaviorSubject<GameSession[]>([
-    { id: genId(), playerId: genId(), gameId: genId(), status: 'Active', startedAt: new Date().toISOString(), finalScore: 0 },
+    { id: genId(), playerId: genId(), gameId: genId(), status: GameStatus.Active, startedAt: new Date().toISOString(), finalScore: 0 },
   ]);
 
   list(): Observable<GameSession[]> { return this.state$.asObservable(); }

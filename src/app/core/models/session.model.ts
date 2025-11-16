@@ -1,4 +1,4 @@
-export type GameStatus = 'Active' | 'Completed' | 'Abandoned';
+import { GameStatus } from '../enums/GameStatus';
 
 export interface GameSession {
   id: string; // Guid

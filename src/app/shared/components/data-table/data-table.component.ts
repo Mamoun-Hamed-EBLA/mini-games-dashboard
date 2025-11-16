@@ -47,6 +47,15 @@ export interface ColumnDef<T = any> {
   styles: [
     `.full-width{ width:100%; }`,
     `.actions-col{ width: 96px; text-align: right; }`,
+    `.table-wrapper table{ border-radius:12px; overflow:hidden; }`,
+    `.table-wrapper .mat-mdc-header-row{ background: linear-gradient(90deg, rgba(124,58,237,.14), rgba(14,165,233,.12)); }`,
+    `.table-wrapper .mat-mdc-header-cell{ color:#0f172a; font-weight:600; border-bottom:1px solid var(--app-border); }`,
+    `.table-wrapper .mat-mdc-row{ transition: background .15s ease, transform .06s ease; }`,
+    `.table-wrapper .mat-mdc-row:hover{ background: rgba(2,6,23,.03); }`,
+    `.table-wrapper .mat-mdc-row:active{ transform: scale(0.999); }`,
+    `.table-wrapper .mat-mdc-cell{ border-bottom:1px solid var(--app-border); }`,
+    `.table-wrapper .mat-mdc-paginator{ color:#334155; }`,
+    `.table-wrapper .mat-mdc-paginator .mat-mdc-icon-button{ color:#64748b; }`,
   ]
 })
 export class DataTableComponent<T = any> implements OnChanges, AfterViewInit {

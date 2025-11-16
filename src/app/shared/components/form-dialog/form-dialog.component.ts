@@ -18,20 +18,23 @@ export interface FormDialogData {
   template: `
     <h2 mat-dialog-title>{{ data.title }}</h2>
     <mat-dialog-content>
-      <app-dynamic-form [config]="data.config"
-                        [value]="data.value || null"
-                        [submitLabel]="data.submitLabel || 'Save'"
-                        [cols]="data.cols || 1"
-                        (submitted)="submit($event)"></app-dynamic-form>
+      <app-dynamic-form
+        #dynamicForm
+        [config]="data.config"
+        [value]="data.value || null"
+        [submitLabel]="data.submitLabel || 'Save'"
+        [cols]="data.cols || 1"
+        (submitted)="submit($event)"></app-dynamic-form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Cancel</button>
+      <button mat-flat-button color="primary" [disabled]="dynamicForm.form.invalid" (click)="submit(dynamicForm.form.value)">Save</button>
+      <button mat-flat-button mat-dialog-close>Cancel</button>
     </mat-dialog-actions>
   `,
   styles: [
     `:host { display:block; }
      mat-dialog-content { padding-top: 0; max-height: 70vh; overflow: auto; }
-     mat-dialog-actions { padding: 8px 0 0; }
+     mat-dialog-actions { padding: 1rem ; }
     `
   ]
 })
@@ -39,8 +42,7 @@ export class FormDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: FormDialogData,
     private ref: MatDialogRef<FormDialogComponent>
-  ) {}
-
+  ) { }
   submit(result: any) {
     this.ref.close(result);
   }

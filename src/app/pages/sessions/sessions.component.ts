@@ -3,7 +3,8 @@ import { SharedModule } from '../../shared/shared.module';
 import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
-import { GameSession, GameStatus } from '../../core/models/session.model';
+import { GameSession } from '../../core/models/session.model';
+import { GameStatus } from '../../core/enums/GameStatus';
 import { SessionService } from '../../core/services/session.service';
 import { PlayerService } from '../../core/services/player.service';
 import { GameService } from '../../core/services/game.service';
@@ -50,7 +51,7 @@ export class SessionsComponent {
   columns: ColumnDef<GameSession>[] = [
     { columnDef: 'playerId', header: 'Player', cell: r => this.playerName(r.playerId) },
     { columnDef: 'gameId', header: 'Game', cell: r => this.gameName(r.gameId) },
-    { columnDef: 'status', header: 'Status' },
+    { columnDef: 'status', header: 'Status', cell: r => GameStatus[r.status] },
     { columnDef: 'finalScore', header: 'Final Score' },
     { columnDef: 'startedAt', header: 'Started', cell: r => new Date(r.startedAt).toLocaleString() },
     { columnDef: 'endedAt', header: 'Ended', cell: r => r.endedAt ? new Date(r.endedAt).toLocaleString() : '-' },
@@ -85,11 +86,7 @@ export class SessionsComponent {
       config: [
         { name: 'playerId', label: 'Player', type: 'select', required: true, options: this.playersOpts, colSpan: 1 },
         { name: 'gameId', label: 'Game', type: 'select', required: true, options: this.gamesOpts, colSpan: 1 },
-        { name: 'status', label: 'Status', type: 'select', required: true, defaultValue: 'Active', options: [
-          { label: 'Active', value: 'Active' },
-          { label: 'Completed', value: 'Completed' },
-          { label: 'Abandoned', value: 'Abandoned' },
-        ] },
+        { name: 'status', label: 'Status', type: 'select', required: true, enumType: GameStatus, defaultValue: GameStatus.Active },
         { name: 'finalScore', label: 'Final Score', type: 'number', validators: [{ name: 'min', value: 0 }] },
         { name: 'durationSeconds', label: 'Duration (seconds)', type: 'number', validators: [{ name: 'min', value: 0 }] },
         { name: 'startedAt', label: 'Started At', type: 'date', required: true, colSpan: 1 },
@@ -120,11 +117,7 @@ export class SessionsComponent {
       config: [
         { name: 'playerId', label: 'Player', type: 'select', required: true, options: this.playersOpts, colSpan: 1 },
         { name: 'gameId', label: 'Game', type: 'select', required: true, options: this.gamesOpts, colSpan: 1 },
-        { name: 'status', label: 'Status', type: 'select', required: true, options: [
-          { label: 'Active', value: 'Active' },
-          { label: 'Completed', value: 'Completed' },
-          { label: 'Abandoned', value: 'Abandoned' },
-        ] },
+        { name: 'status', label: 'Status', type: 'select', required: true, enumType: GameStatus },
         { name: 'finalScore', label: 'Final Score', type: 'number', validators: [{ name: 'min', value: 0 }] },
         { name: 'durationSeconds', label: 'Duration (seconds)', type: 'number', validators: [{ name: 'min', value: 0 }] },
         { name: 'startedAt', label: 'Started At', type: 'date', required: true, colSpan: 1 },
