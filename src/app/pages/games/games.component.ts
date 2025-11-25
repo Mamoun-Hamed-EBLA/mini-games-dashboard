@@ -1,17 +1,23 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Signal, signal } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
 import { Game } from '../../core/models/game.model';
-import { Observable } from 'rxjs';
+import { Observable, switchMap, BehaviorSubject, map } from 'rxjs';
 import { GameService } from '../../core/services/game.service';
 import { NotificationService } from '../../core/notifications/notification.service';
+import { GameCriteria } from '../../core/models/page-criteria.models';
+import { FilterConfig } from '../../core/models/filter-config.model';
+import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
+import { PagedData } from '../../core/models/api-response.model';
+import { GameType } from './game-types.enum';
+import { FormFieldConfig } from '../../shared/components/dynamic-form/dynamic-form.component';
 
 @Component({
   selector: 'app-games',
   standalone: true,
-  imports: [SharedModule, DataTableComponent],
+  imports: [SharedModule, DataTableComponent, TableFiltersComponent],
   template: `
     <div class="games-page">
       <mat-toolbar color="primary">
@@ -25,8 +31,20 @@ import { NotificationService } from '../../core/notifications/notification.servi
 
       <mat-card>
         <mat-card-content>
-          <app-data-table [columns]="columns" [data]="(games$ | async) ?? []" [actions]="true"
-                           (edit)="openEdit($event)" (remove)="delete($event)"></app-data-table>
+          <app-table-filters 
+            [config]="filterConfig"
+            [initialCriteria]="currentCriteria()"
+            (filtersChanged)="onFiltersChanged($event)">
+          </app-table-filters>
+          
+          <app-data-table 
+            [columns]="columns" 
+            [data]="(games$ | async) ?? []" 
+            [paginationInfo]="(paginationInfo$ | async) ?? null"
+            [actions]="true"
+            (edit)="openEdit($event)" 
+            (remove)="deleteGame($event)">
+          </app-data-table>
         </mat-card-content>
       </mat-card>
     </div>
@@ -37,11 +55,79 @@ import { NotificationService } from '../../core/notifications/notification.servi
   ]
 })
 export class GamesComponent {
-  private svc = inject(GameService);
+  private gameService = inject(GameService);
   private dialog = inject(MatDialog);
-  private notify = inject(NotificationService);
+  private notificationService = inject(NotificationService);
 
-  games$: Observable<Game[]> = this.svc.list();
+  currentCriteria = signal<GameCriteria>({});
+  private criteriaSubject = new BehaviorSubject<GameCriteria>({});
+  
+  pagedData$: Observable<PagedData<Game>> = this.criteriaSubject.pipe(
+    switchMap(criteria => this.gameService.list(criteria))
+  );
+
+  games$: Observable<Game[]> = this.pagedData$.pipe(
+    map(pagedData => pagedData.items)
+  );
+
+  paginationInfo$ = this.pagedData$.pipe(
+    map(pagedData => ({
+      pageNumber: pagedData.pageNumber,
+      pageSize: pagedData.pageSize,
+      totalCount: pagedData.totalCount,
+      totalPages: pagedData.totalPages,
+      hasPreviousPage: pagedData.hasPreviousPage,
+      hasNextPage: pagedData.hasNextPage,
+    }))
+  );
+
+  filterConfig: FilterConfig = {
+    showSearch: true,
+    searchPlaceholder: 'Search games...',
+    showSort: true,
+    sortOptions: [
+      { label: 'Name', value: 'name' },
+      { label: 'Max Score', value: 'maxScore' },
+      { label: 'Time Limit', value: 'timeLimit' },
+      { label: 'Created Date', value: 'createdAt' },
+    ],
+    showDateFilters: true,
+    customFields: [
+      {
+        name: 'minMaxScore',
+        label: 'Min Max Score',
+        type: 'number',
+        placeholder: 'Minimum score',
+        min: 0,
+      },
+      {
+        name: 'maxMaxScore',
+        label: 'Max Max Score',
+        type: 'number',
+        placeholder: 'Maximum score',
+        min: 0,
+      },
+      {
+        name: 'minTimeLimit',
+        label: 'Min Time Limit',
+        type: 'number',
+        placeholder: 'Minimum time (min)',
+        min: 0,
+      },
+      {
+        name: 'maxTimeLimit',
+        label: 'Max Time Limit',
+        type: 'number',
+        placeholder: 'Maximum time (min)',
+        min: 0,
+      },
+      {
+        name: 'isActive',
+        label: 'Active Status',
+        type: 'boolean',
+      },
+    ],
+  };
 
   columns: ColumnDef<Game>[] = [
     { columnDef: 'name', header: 'Name' },
@@ -50,26 +136,38 @@ export class GamesComponent {
     { columnDef: 'timeLimit', header: 'Time Limit (min)' },
     { columnDef: 'isActive', header: 'Active', cell: r => (r.isActive ? 'Yes' : 'No') },
     { columnDef: 'rules', header: 'Rules' },
+    { columnDef: 'createdAt', header: 'Created At', cell: r => new Date(r.createdAt).toLocaleString() },
+    { columnDef: 'createdBy', header: 'Created By' },
+    { columnDef: 'updatedAt', header: 'Updated At', cell: r => r.updatedAt ? new Date(r.updatedAt).toLocaleString() : '-' },
+    { columnDef: 'updatedBy', header: 'Updated By' },
   ];
 
   constructor() {}
+  nameOptions = Object.values(GameType).map(value => ({ label: value, value: value }));
 
-  openCreate() {
-    const data: FormDialogData = {
-      title: 'Create Game',
-      submitLabel: 'Create',
-      config: [
-        { name: 'name', label: 'Name', type: 'text', required: true },
-        { name: 'description', label: 'Description', type: 'textarea' },
+  columnsConfig:Signal<FormFieldConfig[]> = signal([
+        { name: 'name', label: 'Name', type: 'select', required: true, options: this.nameOptions },
+        { name: 'description', label: 'Description',required: true, type: 'textarea' },
         { name: 'maxScore', label: 'Max Score', type: 'number', validators: [{ name: 'min', value: 0 }] },
         { name: 'timeLimit', label: 'Time Limit (minutes)', type: 'number', validators: [{ name: 'min', value: 1 }] },
         { name: 'isActive', label: 'Active', type: 'toggle', defaultValue: true },
         { name: 'rules', label: 'Rules', type: 'textarea' },
-      ],
+      ],)
+  onFiltersChanged(criteria: GameCriteria): void {
+    this.currentCriteria.set(criteria);
+    this.criteriaSubject.next(criteria);
+  }
+  openCreate() {
+    const data: FormDialogData = {
+      title: 'Create Game',
+      submitLabel: 'Create',
+      config: this.columnsConfig(),
     };
     this.dialog.open(FormDialogComponent, { data, width: '720px', maxWidth: '95vw' }).afterClosed().subscribe(result => {
       if (result) {
-        this.svc.create(result).subscribe(() => this.notify.success('Game created'));
+        this.gameService.create(result).subscribe(() => {
+          this.notificationService.success('Game created');
+        });
       }
     });
   }
@@ -79,25 +177,22 @@ export class GamesComponent {
       title: 'Edit Game',
       submitLabel: 'Update',
       value: row,
-      config: [
-        { name: 'name', label: 'Name', type: 'text', required: true },
-        { name: 'description', label: 'Description', type: 'textarea' },
-        { name: 'maxScore', label: 'Max Score', type: 'number', validators: [{ name: 'min', value: 0 }] },
-        { name: 'timeLimit', label: 'Time Limit (minutes)', type: 'number', validators: [{ name: 'min', value: 1 }] },
-        { name: 'isActive', label: 'Active', type: 'toggle' },
-        { name: 'rules', label: 'Rules', type: 'textarea' },
-      ],
+      config: this.columnsConfig(),
     };
     this.dialog.open(FormDialogComponent, { data, width: '720px', maxWidth: '95vw' }).afterClosed().subscribe(result => {
       if (result) {
-        this.svc.update(row.id, result).subscribe(() => this.notify.success('Game updated'));
+        this.gameService.update(row.id, result).subscribe(() => {
+          this.notificationService.success('Game updated');
+        });
       }
     });
   }
 
-  delete(row: Game) {
-    if (confirm(`Delete game ${row.name}?`)) {
-      this.svc.delete(row.id).subscribe(() => this.notify.success('Game deleted'));
+  deleteGame(game: Game): void {
+    if (confirm(`Delete game ${game.name}?`)) {
+      this.gameService.delete(game.id).subscribe(() => {
+        this.notificationService.success('Game deleted');
+      });
     }
   }
 }

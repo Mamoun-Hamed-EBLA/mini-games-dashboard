@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,12 +7,16 @@ import { Tenant } from '../../core/models/tenant.model';
 import { TenantService } from '../../core/services/tenant.service';
 import { SubscriptionService } from '../../core/services/subscription.service';
 import { NotificationService } from '../../core/notifications/notification.service';
-import { Observable } from 'rxjs';
+import { Observable, switchMap, BehaviorSubject, map } from 'rxjs';
+import { TenantCriteria } from '../../core/models/page-criteria.models';
+import { FilterConfig } from '../../core/models/filter-config.model';
+import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
+import { PagedData } from '../../core/models/api-response.model';
 
 @Component({
   selector: 'app-tenants',
   standalone: true,
-  imports: [SharedModule, DataTableComponent],
+  imports: [SharedModule, DataTableComponent, TableFiltersComponent],
   template: `
     <div class="tenants-page">
       <mat-toolbar color="primary">
@@ -26,8 +30,20 @@ import { Observable } from 'rxjs';
 
       <mat-card>
         <mat-card-content>
-          <app-data-table [columns]="columns" [data]="(items$ | async) ?? []" [actions]="true"
-                           (edit)="openEdit($event)" (remove)="delete($event)"></app-data-table>
+          <app-table-filters 
+            [config]="filterConfig"
+            [initialCriteria]="currentCriteria()"
+            (filtersChanged)="onFiltersChanged($event)">
+          </app-table-filters>
+          
+          <app-data-table 
+            [columns]="columns" 
+            [data]="(items$ | async) ?? []" 
+            [paginationInfo]="(paginationInfo$ | async) ?? null"
+            [actions]="true"
+            (edit)="openEdit($event)" 
+            (remove)="deleteTenant($event)">
+          </app-data-table>
         </mat-card-content>
       </mat-card>
     </div>
@@ -38,12 +54,52 @@ import { Observable } from 'rxjs';
   ]
 })
 export class TenantsComponent {
-  private svc = inject(TenantService);
+  private tenantService = inject(TenantService);
   private dialog = inject(MatDialog);
-  private notify = inject(NotificationService);
-  private subsSvc = inject(SubscriptionService);
+  private notificationService = inject(NotificationService);
+  private subscriptionService = inject(SubscriptionService);
 
-  items$: Observable<Tenant[]> = this.svc.list();
+  currentCriteria = signal<TenantCriteria>({});
+  private criteriaSubject = new BehaviorSubject<TenantCriteria>({});
+  
+  pagedData$: Observable<PagedData<Tenant>> = this.criteriaSubject.pipe(
+    switchMap(criteria => this.tenantService.list(criteria))
+  );
+
+  items$: Observable<Tenant[]> = this.pagedData$.pipe(
+    map(pagedData => pagedData.items)
+  );
+
+  paginationInfo$ = this.pagedData$.pipe(
+    map(pagedData => ({
+      pageNumber: pagedData.pageNumber,
+      pageSize: pagedData.pageSize,
+      totalCount: pagedData.totalCount,
+      totalPages: pagedData.totalPages,
+      hasPreviousPage: pagedData.hasPreviousPage,
+      hasNextPage: pagedData.hasNextPage,
+    }))
+  );
+
+  filterConfig: FilterConfig = {
+    showSearch: true,
+    searchPlaceholder: 'Search tenants...',
+    showSort: true,
+    sortOptions: [
+      { label: 'Name', value: 'name' },
+      { label: 'Created Date', value: 'createdAt' },
+      { label: 'Updated Date', value: 'updatedAt' },
+    ],
+    showDateFilters: true,
+    customFields: [
+      {
+        name: 'subscriptionId',
+        label: 'Subscription',
+        type: 'select',
+        options: [],
+      },
+    ],
+  };
 
   columns: ColumnDef<Tenant>[] = [
     { columnDef: 'name', header: 'Name' },
@@ -55,8 +111,20 @@ export class TenantsComponent {
 
   subsOpts: { label: string; value: string }[] = [];
 
-  constructor(){
-    this.subsSvc.list().subscribe(items => this.subsOpts = items.map(x => ({ label: x.name, value: x.id })));
+  constructor() {
+    this.subscriptionService.list().subscribe(subscriptions => {
+      this.subsOpts = subscriptions.map(sub => ({ label: sub.name, value: sub.id }));
+      // Update filter config with subscription options
+      const subscriptionField = this.filterConfig.customFields?.find(f => f.name === 'subscriptionId');
+      if (subscriptionField) {
+        subscriptionField.options = this.subsOpts;
+      }
+    });
+  }
+
+  onFiltersChanged(criteria: TenantCriteria): void {
+    this.currentCriteria.set(criteria);
+    this.criteriaSubject.next(criteria);
   }
 
   openCreate() {
@@ -77,7 +145,9 @@ export class TenantsComponent {
     };
     this.dialog.open(FormDialogComponent, { data, width: '760px', maxWidth: '95vw' }).afterClosed().subscribe(result => {
       if (result) {
-        this.svc.create(result).subscribe(() => this.notify.success('Tenant created'));
+        this.tenantService.create(result).subscribe(() => {
+          this.notificationService.success('Tenant created');
+        });
       }
     });
   }
@@ -101,14 +171,18 @@ export class TenantsComponent {
     };
     this.dialog.open(FormDialogComponent, { data, width: '760px', maxWidth: '95vw' }).afterClosed().subscribe(result => {
       if (result) {
-        this.svc.update(row.id, result).subscribe(() => this.notify.success('Tenant updated'));
+        this.tenantService.update(row.id, result).subscribe(() => {
+          this.notificationService.success('Tenant updated');
+        });
       }
     });
   }
 
-  delete(row: Tenant) {
-    if (confirm(`Delete tenant ${row.name}?`)) {
-      this.svc.delete(row.id).subscribe(() => this.notify.success('Tenant deleted'));
+  deleteTenant(tenant: Tenant): void {
+    if (confirm(`Delete tenant ${tenant.name}?`)) {
+      this.tenantService.delete(tenant.id).subscribe(() => {
+        this.notificationService.success('Tenant deleted');
+      });
     }
   }
 }

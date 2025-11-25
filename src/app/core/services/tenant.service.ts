@@ -1,20 +1,38 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { Tenant } from '../models/tenant.model';
+import { TenantCriteria } from '../models/page-criteria.models';
+import { CriteriaNormalizerService } from './criteria-normalizer.service';
+import { PagedResponse, PagedData } from '../models/api-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class TenantService {
   private readonly reload$ = new BehaviorSubject<void>(undefined);
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private criteriaService: CriteriaNormalizerService
+  ) {}
 
   refresh() { this.reload$.next(); }
 
-  list(): Observable<Tenant[]> {
+  list(criteria?: TenantCriteria): Observable<PagedData<Tenant>> {
     return this.reload$.pipe(
-      switchMap(() => this.http.get<any>('Tenant')),
-      map(resp => (resp?.data ?? resp) as Tenant[])
+      switchMap(() => {
+        let params = new HttpParams();
+        if (criteria) {
+          const normalized = this.criteriaService.normalize(criteria);
+          Object.keys(normalized).forEach(key => {
+            const value = normalized[key];
+            if (value !== null && value !== undefined && value !== '') {
+              params = params.set(key, String(value));
+            }
+          });
+        }
+        return this.http.get<PagedResponse<Tenant>>('Tenant', { params });
+      }),
+      map(response => response.data)
     );
   }
 

@@ -6,13 +6,64 @@
 @use '@angular/material' as mat;
 @import '@ng-select/ng-select/themes/default.theme.css';
 
+// Custom color palette based on logo
+$custom-primary: (
+  50: #f8fafc,
+  100: #f1f5f9,
+  200: #e2e8f0,
+  300: #cbd5e1,
+  400: #94a3b8,
+  500: #64748b,
+  600: #475569,
+  700: #334155,
+  800: #1e293b,
+  900: #0f172a,
+  contrast: (
+    50: #000,
+    100: #000,
+    200: #000,
+    300: #000,
+    400: #000,
+    500: #fff,
+    600: #fff,
+    700: #fff,
+    800: #fff,
+    900: #fff,
+  )
+);
+
+$custom-accent: (
+  50: #fef9f3,
+  100: #fdf3e7,
+  200: #f9e6cf,
+  300: #f3d9b7,
+  400: #e8c9a3,
+  500: #d4a574,
+  600: #c89563,
+  700: #b8884f,
+  800: #a67342,
+  900: #8b5e35,
+  contrast: (
+    50: #000,
+    100: #000,
+    200: #000,
+    300: #000,
+    400: #000,
+    500: #fff,
+    600: #fff,
+    700: #fff,
+    800: #fff,
+    900: #fff,
+  )
+);
+
 html {
   @include mat.theme(
     (
       color: (
         theme-type: light,
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
+        primary: $custom-primary,
+        tertiary: $custom-accent,
       ),
       typography: Roboto,
       density: 0,
@@ -86,36 +137,91 @@ body {
 }
 
 :root {
-  --app-primary: #7c3aed; /* violet-600 for gaming accent */
-  --app-accent: #0ea5e9; /* sky-500 */
-  --app-bg: #f8fafc; /* slate-50 */
+  --app-primary: #334155; /* slate-700 - lighter for better contrast */
+  --app-primary-dark: #1e293b; /* slate-800 */
+  --app-accent: #d4a574; /* gold from logo */
+  --app-gold: #d4a574;
+  --app-gold-light: #f3e5d3;
+  --app-gold-medium: #e8c9a3;
+  --app-gold-dark: #b8884f;
+  --app-bg: #f8fafc; /* slate-50 light background */
   --app-card: #ffffff;
-  --app-border: rgba(2, 6, 23, 0.12); /* slate-950 @12% */
+  --app-border: rgba(100, 116, 139, 0.15);
+  --app-text-dark: #0f172a; /* slate-900 */
+  --app-text-medium: #334155; /* slate-700 */
+  --app-text-light: #64748b; /* slate-500 */
 }
 
 body {
-  background: radial-gradient(800px 500px at -10% -20%, rgba(124, 58, 237, 0.12), transparent),
-    radial-gradient(900px 600px at 110% 120%, rgba(14, 165, 233, 0.1), transparent),
-    linear-gradient(#ffffff, #ffffff);
+  background: 
+    radial-gradient(circle at top right, rgba(212, 165, 116, 0.06), transparent 50%),
+    radial-gradient(circle at bottom left, rgba(51, 65, 85, 0.04), transparent 50%),
+    #fafbfc;
 }
 
 mat-card {
   background: var(--app-card);
   border: 1px solid var(--app-border);
-  backdrop-filter: blur(12px);
-  border-radius: 14px;
-  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+mat-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .mat-mdc-unelevated-button.mat-primary {
-  background: linear-gradient(90deg, rgba(124, 58, 237, 0.95), rgba(14, 165, 233, 0.95));
+  background: var(--app-primary);
   color: #fff;
+  font-weight: 500;
+}
+.mat-mdc-unelevated-button.mat-primary:hover {
+  background: var(--app-primary-dark);
+}
+.mat-mdc-unelevated-button.mat-accent {
+  background: linear-gradient(135deg, var(--app-gold), var(--app-gold-dark));
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(212, 165, 116, 0.3);
+}
+.mat-mdc-unelevated-button.mat-accent:hover {
+  background: linear-gradient(135deg, var(--app-gold-dark), #a67342);
+  box-shadow: 0 4px 12px rgba(212, 165, 116, 0.4);
+}
+.mat-toolbar.mat-primary {
+  background: var(--app-primary) !important;
+  color: #fff !important;
+}
+.mat-toolbar.mat-primary .mat-toolbar-row {
+  color: #fff;
+}
+.mat-toolbar.mat-primary button {
+  color: #fff;
+}
+.mat-toolbar.mat-primary .mat-icon {
+  color: #fff;
+}
+/* Dialog Styling */
+.mat-mdc-dialog-container {
+  --mdc-dialog-container-color: #fff !important;
+  background-color: #fff !important;
+}
+.mat-mdc-dialog-surface {
+  background-color: #fff !important;
+  overflow-y: hidden !important;
+}
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: #fff !important;
+}
+.mat-mdc-dialog-container .mat-mdc-dialog-title {
+  color: var(--app-text-dark);
+  font-weight: 600;
 }
 .mat-mdc-dialog-container .mat-mdc-dialog-title + .mat-mdc-dialog-content {
   padding-top: 1rem !important;
 }
-.mat-mdc-dialog-surface {
-  overflow-y: hidden !important;
+.mat-mdc-dialog-actions {
+  padding: 16px 24px !important;
+  border-top: 1px solid var(--app-border);
 }
 .ng-select-wrapper {
   position: relative;
@@ -139,16 +245,169 @@ mat-card {
   background-color: transparent;
 }
 .ng-select-wrapper .ng-select.ng-select-focused .ng-select-container {
-  border-color: var(--mat-sys-primary, #7c3aed);
+  border-color: var(--app-gold-dark);
   border-width: 2px;
   padding: 0 13px;
+  box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
 }
 .ng-select-wrapper .ng-select.ng-select-focused ~ .ng-select-label {
-  color: var(--mat-sys-primary, #7c3aed);
+  color: var(--app-gold-dark);
+  font-weight: 500;
 }
 .ng-select-wrapper .ng-select .ng-select-container:hover {
   border-color: rgba(0, 0, 0, 0.87);
 }
 .ng-select-wrapper .ng-select .ng-value-container {
   padding-top: 6px;
+}
+
+/* Fix ng-select dropdown transparency */
+.ng-dropdown-panel {
+  background-color: #fff !important;
+  border: 1px solid var(--app-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+.ng-dropdown-panel .ng-dropdown-panel-items {
+  background-color: #fff !important;
+}
+.ng-option {
+  background-color: #fff !important;
+  color: var(--app-text-dark);
+}
+.ng-option:hover {
+  background-color: rgba(212, 165, 116, 0.08) !important;
+}
+.ng-option.ng-option-selected {
+  background-color: rgba(212, 165, 116, 0.15) !important;
+  color: var(--app-text-dark);
+  font-weight: 500;
+}
+.ng-option.ng-option-marked {
+  background-color: rgba(212, 165, 116, 0.08) !important;
+}
+
+/* Material Form Fields - Better Visibility & Compact Size */
+.mat-mdc-form-field {
+  width: 100%;
+}
+.mat-mdc-text-field-wrapper {
+  background-color: #fff;
+}
+.mat-mdc-form-field.mat-focused .mat-mdc-notch-piece {
+  border-color: var(--app-gold-dark) !important;
+}
+.mat-mdc-form-field.mat-focused .mdc-floating-label {
+  color: var(--app-gold-dark) !important;
+}
+.mat-mdc-select-value {
+  color: var(--app-text-dark);
+}
+.mat-mdc-select-arrow {
+  color: var(--app-text-light);
+}
+/* Compact form fields */
+.mat-mdc-form-field-appearance-outline .mat-mdc-form-field-infix {
+  padding-top: 14px;
+  padding-bottom: 14px;
+  min-height: 48px;
+}
+.mat-mdc-form-field-appearance-outline .mdc-notched-outline__notch {
+  border-color: rgba(0, 0, 0, 0.23);
+}
+.mat-mdc-form-field-appearance-outline.mat-focused .mdc-notched-outline__notch {
+  border-color: var(--app-gold-dark);
+}
+
+/* Material Select Dropdown Panel - Fix Transparency */
+.mat-mdc-select-panel {
+  background-color: #fff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+.mat-mdc-option {
+  background-color: #fff !important;
+  color: var(--app-text-dark);
+}
+.mat-mdc-option:hover {
+  background-color: rgba(212, 165, 116, 0.08) !important;
+}
+.mat-mdc-option.mdc-list-item--selected {
+  background-color: rgba(212, 165, 116, 0.15) !important;
+}
+.mat-mdc-option.mat-mdc-option-active {
+  background-color: rgba(212, 165, 116, 0.08) !important;
+}
+
+/* Icon Buttons */
+.mat-mdc-icon-button.mat-primary {
+  color: var(--app-primary);
+}
+.mat-mdc-icon-button.mat-warn {
+  color: #dc2626;
+}
+.mat-mdc-icon-button:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Sidebar Styling */
+mat-sidenav {
+  background: #fff;
+  border-right: 1px solid var(--app-border);
+}
+.mat-mdc-list-item {
+  color: var(--app-text-medium) !important;
+  border-radius: 8px;
+  margin: 4px 8px;
+}
+.mat-mdc-list-item:hover {
+  background: rgba(212, 165, 116, 0.08) !important;
+}
+.mat-mdc-list-item.active,
+.mat-mdc-list-item.mdc-list-item--activated {
+  background: linear-gradient(90deg, rgba(212, 165, 116, 0.15), transparent) !important;
+  border-left: 3px solid var(--app-gold) !important;
+  color: var(--app-text-dark) !important;
+  font-weight: 600;
+}
+.mat-mdc-list-item .mat-icon {
+  color: var(--app-text-light);
+}
+.mat-mdc-list-item.active .mat-icon,
+.mat-mdc-list-item.mdc-list-item--activated .mat-icon {
+  color: var(--app-gold-dark);
+}
+
+/* Fix purple navigation items - use dark blue/slate */
+.mat-mdc-list-item.mdc-list-item--selected .mdc-list-item__primary-text,
+.mat-mdc-list-item.mdc-list-item--activated .mdc-list-item__primary-text {
+  color: var(--app-primary) !important;
+  font-weight: 600;
+}
+.mat-mdc-list-item.mdc-list-item--selected,
+.mat-mdc-list-item.mdc-list-item--activated {
+  background: linear-gradient(90deg, rgba(51, 65, 85, 0.08), transparent) !important;
+  border-left: 3px solid var(--app-primary) !important;
+}
+.mat-mdc-list-item .mdc-list-item__primary-text {
+  color: var(--app-text-medium);
+}
+.mat-mdc-list-item.mdc-list-item--selected .mat-icon,
+.mat-mdc-list-item.mdc-list-item--activated .mat-icon {
+  color: var(--app-primary) !important;
+}
+
+/* Improved Card Styling */
+mat-card-header {
+  border-bottom: 1px solid var(--app-border);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+mat-card-title {
+  color: var(--app-text-dark);
+  font-weight: 600;
+}
+
+/* Better Contrast for Disabled Elements */
+.mat-mdc-button:disabled,
+.mat-mdc-unelevated-button:disabled {
+  opacity: 0.5;
 }

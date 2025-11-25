@@ -1,41 +1,68 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { Player } from '../models/player.model';
-
-function genId() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
+import { BaseCriteria } from '../models/base-criteria.model';
+import { CriteriaNormalizerService } from './criteria-normalizer.service';
+import { PagedResponse, PagedData } from '../models/api-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class PlayerService {
-  private readonly state$ = new BehaviorSubject<Player[]>([
-    { id: genId(), username: 'alice', socialMediaId: 'alice123', countryCode: 'US', icon: 'avatar1.png', frame: 'gold', score: 1530, lastLoginAt: new Date(), isActive: true },
-    { id: genId(), username: 'bob', socialMediaId: 'bob_the_gamer', countryCode: 'FR', icon: 'avatar2.png', frame: 'silver', score: 890, lastLoginAt: new Date(), isActive: true },
-    { id: genId(), username: 'carol', socialMediaId: 'carol.gg', countryCode: 'EG', icon: 'avatar3.png', frame: 'bronze', score: 270, lastLoginAt: null, isActive: false },
-  ]);
+  private readonly reload$ = new BehaviorSubject<void>(undefined);
 
-  list(): Observable<Player[]> { return this.state$.asObservable(); }
-  get(id: string): Observable<Player | undefined> { return this.list().pipe(map(arr => arr.find(x => x.id === id))); }
+  constructor(
+    private http: HttpClient,
+    private criteriaService: CriteriaNormalizerService
+  ) {}
 
-  create(payload: Omit<Player, 'id'>): Observable<Player> {
-    const item: Player = { ...payload, id: genId() };
-    this.state$.next([item, ...this.state$.value]);
-    return of(item).pipe(delay(200));
+  refresh(): void {
+    this.reload$.next();
   }
 
-  update(id: string, changes: Partial<Player>): Observable<Player | undefined> {
-    const items = this.state$.value.map(p => (p.id === id ? { ...p, ...changes } : p));
-    this.state$.next(items);
-    return of(items.find(p => p.id === id)).pipe(delay(200));
+  list(criteria?: BaseCriteria): Observable<PagedData<Player>> {
+    return this.reload$.pipe(
+      switchMap(() => {
+        let params = new HttpParams();
+        if (criteria) {
+          const normalized = this.criteriaService.normalize(criteria);
+          Object.keys(normalized).forEach(key => {
+            const value = normalized[key];
+            if (value !== null && value !== undefined && value !== '') {
+              params = params.set(key, String(value));
+            }
+          });
+        }
+        return this.http.get<PagedResponse<Player>>('Players', { params });
+      }),
+      map(response => response.data)
+    );
+  }
+
+  get(id: string): Observable<Player> {
+    return this.http.get<any>(`Players/${id}`).pipe(
+      map(response => (response?.data ?? response) as Player)
+    );
+  }
+
+  create(payload: Omit<Player, 'id' | 'createdAt' | 'updatedAt' | 'createdBy' | 'updatedBy'>): Observable<Player> {
+    return this.http.post<any>('Players', payload).pipe(
+      map(response => (response?.data ?? response) as Player),
+      tap(() => this.refresh())
+    );
+  }
+
+  update(id: string, changes: Partial<Player>): Observable<Player> {
+    return this.http.put<any>(`Players/${id}`, changes).pipe(
+      map(response => (response?.data ?? response) as Player),
+      tap(() => this.refresh())
+    );
   }
 
   delete(id: string): Observable<boolean> {
-    this.state$.next(this.state$.value.filter(p => p.id !== id));
-    return of(true).pipe(delay(150));
+    return this.http.delete<any>(`Players/${id}`).pipe(
+      map(() => true),
+      tap(() => this.refresh())
+    );
   }
 }

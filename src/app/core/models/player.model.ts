@@ -1,11 +1,12 @@
-export interface Player {
-  id: string; // Guid
+import { BaseModel } from './base-model';
+
+export interface Player extends BaseModel {
   username: string;
   socialMediaId: string;
   countryCode: string;
   icon: string;
   frame: string;
   score: number;
-  lastLoginAt?: Date | null;
+  lastLoginAt?: string | null;
   isActive: boolean;
 }
