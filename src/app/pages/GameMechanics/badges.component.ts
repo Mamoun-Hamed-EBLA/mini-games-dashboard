@@ -8,7 +8,7 @@ import { Badge } from '../../core/models/badge.model';
 import { BadgeService } from '../../core/services/badge.service';
 import { NotificationService } from '../../core/notifications/notification.service';
 import { BadgeType } from '../../core/enums/BadgeType';
-import { Observable, BehaviorSubject, switchMap, map, catchError, of } from 'rxjs';
+import { Observable, BehaviorSubject, switchMap, map, catchError, of, shareReplay } from 'rxjs';
 import { BaseCriteria } from '../../core/models/base-criteria.model';
 import { FilterConfig } from '../../core/models/filter-config.model';
 import { PagedData } from '../../core/models/api-response.model';
@@ -79,7 +79,8 @@ export class BadgesComponent {
           hasNextPage: false,
         });
       })
-    ))
+    )),
+    shareReplay(1)
   );
 
   badges$: Observable<Badge[]> = this.pagedData$.pipe(

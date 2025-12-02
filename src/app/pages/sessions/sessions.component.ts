@@ -9,7 +9,7 @@ import { SessionService } from '../../core/services/session.service';
 import { PlayerService } from '../../core/services/player.service';
 import { GameService } from '../../core/services/game.service';
 import { NotificationService } from '../../core/notifications/notification.service';
-import { Observable, switchMap, BehaviorSubject, map, of, catchError } from 'rxjs';
+import { Observable, switchMap, BehaviorSubject, map, of, catchError, shareReplay } from 'rxjs';
 import { Game } from '../../core/models/game.model';
 import { Player } from '../../core/models/player.model';
 import { SessionCriteria } from '../../core/models/page-criteria.models';
@@ -128,7 +128,8 @@ export class SessionsComponent {
           });
         })
       );
-    })
+    }),
+    shareReplay(1)
   );
 
   sessions$: Observable<GameSession[]> = this.pagedData$.pipe(

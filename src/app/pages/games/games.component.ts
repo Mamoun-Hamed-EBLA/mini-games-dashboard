@@ -4,7 +4,7 @@ import { DataTableComponent, ColumnDef } from '../../shared/components/data-tabl
 import { MatDialog } from '@angular/material/dialog';
 import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
 import { Game } from '../../core/models/game.model';
-import { Observable, switchMap, BehaviorSubject, map } from 'rxjs';
+import { Observable, switchMap, BehaviorSubject, map, shareReplay } from 'rxjs';
 import { GameService } from '../../core/services/game.service';
 import { NotificationService } from '../../core/notifications/notification.service';
 import { GameCriteria } from '../../core/models/page-criteria.models';
@@ -63,7 +63,8 @@ export class GamesComponent {
   private criteriaSubject = new BehaviorSubject<GameCriteria>({});
   
   pagedData$: Observable<PagedData<Game>> = this.criteriaSubject.pipe(
-    switchMap(criteria => this.gameService.list(criteria))
+    switchMap(criteria => this.gameService.list(criteria)),
+    shareReplay(1)
   );
 
   games$: Observable<Game[]> = this.pagedData$.pipe(

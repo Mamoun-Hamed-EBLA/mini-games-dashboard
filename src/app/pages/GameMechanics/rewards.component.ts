@@ -11,7 +11,7 @@ import { CardBackgroundService } from '../../core/services/card-background.servi
 import { NotificationService } from '../../core/notifications/notification.service';
 import { RewardType } from '../../core/enums/RewardType';
 import { KeyType } from '../../core/enums/KeyType';
-import { Observable, BehaviorSubject, switchMap, map, catchError, of } from 'rxjs';
+import { Observable, BehaviorSubject, switchMap, map, catchError, of, shareReplay } from 'rxjs';
 import { BaseCriteria } from '../../core/models/base-criteria.model';
 import { FilterConfig } from '../../core/models/filter-config.model';
 import { PagedData } from '../../core/models/api-response.model';
@@ -89,7 +89,8 @@ export class RewardsComponent {
           hasNextPage: false,
         });
       })
-    ))
+    )),
+    shareReplay(1)
   );
 
   items$: Observable<Reward[]> = this.pagedData$.pipe(

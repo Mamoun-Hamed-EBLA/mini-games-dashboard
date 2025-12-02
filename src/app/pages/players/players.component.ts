@@ -4,7 +4,7 @@ import { DataTableComponent, ColumnDef } from '../../shared/components/data-tabl
 import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Player } from '../../core/models/player.model';
-import { Observable, BehaviorSubject, switchMap, map, catchError, of } from 'rxjs';
+import { Observable, BehaviorSubject, switchMap, map, catchError, of, shareReplay } from 'rxjs';
 import { PlayerService } from '../../core/services/player.service';
 import { NotificationService } from '../../core/notifications/notification.service';
 import { BaseCriteria } from '../../core/models/base-criteria.model';
@@ -77,7 +77,8 @@ export class PlayersComponent {
           hasNextPage: false,
         });
       })
-    ))
+    )),
+    shareReplay(1)
   );
 
   players$: Observable<Player[]> = this.pagedData$.pipe(
