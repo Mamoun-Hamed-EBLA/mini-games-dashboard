@@ -2,6 +2,8 @@ import { Component, HostListener, ViewChild, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { MatSidenav } from '@angular/material/sidenav';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { map, shareReplay } from 'rxjs';
 import { AuthService } from '../core/auth/auth.service';
 import { ShortcutService } from '../core/services/shortcut.service';
 
@@ -11,7 +13,11 @@ import { ShortcutService } from '../core/services/shortcut.service';
   imports: [SharedModule, RouterLink, RouterLinkActive, RouterOutlet],
   template: `
     <mat-sidenav-container class="container">
-      <mat-sidenav #snav mode="side" opened class="sidenav">
+      <mat-sidenav
+        #snav
+        [mode]="(isHandset$ | async) ? 'over' : 'side'"
+        [opened]="!(isHandset$ | async)"
+        class="sidenav">
         <div class="brand">
           <mat-icon>dashboard</mat-icon>
           <span>Mini Games Admin</span>
@@ -98,7 +104,11 @@ import { ShortcutService } from '../core/services/shortcut.service';
      .content{ padding:16px; }
      .spacer{ flex:1 1 auto; }
      .menu-btn{ display:none; }
-     @media (max-width: 960px){ .menu-btn{display:inline-flex;} }`
+     @media (max-width: 960px){
+       .menu-btn{display:inline-flex;}
+       .sidenav{width:80vw; max-width:320px;}
+       .content{padding:12px;}
+     }`
   ]
 })
 export class ShellComponent {
@@ -106,6 +116,15 @@ export class ShellComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
   private shortcuts = inject(ShortcutService);
+
+  private breakpointObserver = inject(BreakpointObserver);
+
+  isHandset$ = this.breakpointObserver
+    .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+    .pipe(
+      map(result => result.matches),
+      shareReplay(1)
+    );
 
   closeOnMobile() {
     // Close the sidenav on smaller screens when navigating

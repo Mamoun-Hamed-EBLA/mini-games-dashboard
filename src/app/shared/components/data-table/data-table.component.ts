@@ -71,8 +71,9 @@ export interface PaginationInfo {
   `,
   styles: [
     `.full-width{ width:100%; }`,
+    `.table-wrapper{ width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }`,
     `.actions-col{ width: 96px; text-align: right; }`,
-    `.table-wrapper table{ border-radius:8px; overflow:hidden; border:1px solid var(--app-border,rgba(100,116,139,0.15)); }`,
+    `.table-wrapper table{ width:100%; min-width:600px; border-radius:8px; overflow:hidden; border:1px solid var(--app-border,rgba(100,116,139,0.15)); }`,
     `.table-wrapper .mat-mdc-header-row{ background: linear-gradient(180deg, #f3e5d3, #faf8f5); border-bottom:2px solid #d4a574; }`,
     `.table-wrapper .mat-mdc-header-cell{ color:#334155; font-weight:600; font-size:13px; letter-spacing:0.3px; padding:16px 12px; }`,
     `.table-wrapper .mat-mdc-row{ transition: background .15s ease; border-bottom:1px solid var(--app-border,rgba(100,116,139,0.1)); }`,
@@ -83,6 +84,7 @@ export interface PaginationInfo {
     `.pagination-info{ display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-top:1px solid var(--app-border,rgba(100,116,139,0.15)); background:linear-gradient(135deg, #fafbfc, #ffffff); font-size:13px; color:#334155; }`,
     `.info-text{ font-weight:600; color:#1e293b; }`,
     `.page-text{ color:#64748b; font-weight:500; }`,
+    `@media (max-width: 768px){ .table-wrapper .mat-mdc-header-cell, .table-wrapper .mat-mdc-cell{ padding:10px 8px; font-size:12px; } .pagination-info{ flex-direction:column; align-items:flex-start; gap:4px; } .actions-col{ width:72px; } }`,
   ]
 })
 export class DataTableComponent<T = any> implements OnChanges, AfterViewInit {
