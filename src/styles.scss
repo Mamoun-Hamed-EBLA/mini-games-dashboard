@@ -169,8 +169,9 @@ mat-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
-.mat-mdc-unelevated-button.mat-primary {
-  background: var(--app-primary);
+.mat-mdc-unelevated-button.mat-primary,
+.mat-mdc-unelevated-button:not(:disabled) {
+  background: var(--app-primary) !important;
   color: #fff;
   font-weight: 500;
 }
@@ -410,4 +411,13 @@ mat-card-title {
 .mat-mdc-button:disabled,
 .mat-mdc-unelevated-button:disabled {
   opacity: 0.5;
+}
+
+.mdc-switch--selected .mdc-switch__track::before, .mdc-switch--selected .mdc-switch__track::after {
+    border-width: var(--mat-slide-toggle-selected-track-outline-width, 2px);
+    border-color: var(--mat-slide-toggle-track-outline-color, var(--mat-sys-outline)) !important;
+}
+.mdc-switch__handle::before,
+.mdc-switch--selected:enabled .mdc-switch__handle::after {
+    background: var(--app-gold-light) !important;
 }

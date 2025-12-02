@@ -25,6 +25,18 @@ import { ShortcutService } from '../core/services/shortcut.service';
             <mat-icon matListItemIcon>sports_esports</mat-icon>
             <div matListItemTitle>Games</div>
           </a>
+          <a *ngIf="hasToken" mat-list-item class="nav-link" routerLink="/badges" routerLinkActive="active" (click)="closeOnMobile()">
+            <mat-icon matListItemIcon>emoji_events</mat-icon>
+            <div matListItemTitle>Badges</div>
+          </a>
+          <a *ngIf="hasToken" mat-list-item class="nav-link" routerLink="/card-backgrounds" routerLinkActive="active" (click)="closeOnMobile()">
+            <mat-icon matListItemIcon>image</mat-icon>
+            <div matListItemTitle>Card Backgrounds</div>
+          </a>
+          <a *ngIf="hasToken" mat-list-item class="nav-link" routerLink="/rewards" routerLinkActive="active" (click)="closeOnMobile()">
+            <mat-icon matListItemIcon>redeem</mat-icon>
+            <div matListItemTitle>Rewards</div>
+          </a>
           <a *ngIf="hasApiKey" mat-list-item class="nav-link" routerLink="/subscriptions" routerLinkActive="active" (click)="closeOnMobile()">
             <mat-icon matListItemIcon>vpn_key</mat-icon>
             <div matListItemTitle>Subscriptions</div>
@@ -78,8 +90,8 @@ import { ShortcutService } from '../core/services/shortcut.service';
 
      .nav-link{ border-radius:12px; margin:6px 10px; padding:4px 6px; transition: all .18s ease; }
      .nav-link mat-icon{ color:#64748b; }
-     .nav-link.active, .nav-link:hover{ background: rgba(124,58,237,.12); box-shadow: inset 0 0 0 1px rgba(124,58,237,.25); }
-     .nav-link.active mat-icon, .nav-link:hover mat-icon{ color:#7c3aed; }
+     .nav-link.active, .nav-link:hover{ background: rgba(124,58,237,.12); box-shadow: inset 0 0 0 1px var(--app-gold-light); }
+     .nav-link.active mat-icon, .nav-link:hover mat-icon{ color:var( --app-gold-medium); }
 
      .toolbar{ position:sticky; top:0; z-index:2; border-bottom:1px solid var(--app-border); background: linear-gradient(90deg, rgba(124,58,237,.25), rgba(14,165,233,.20)); backdrop-filter: blur(8px); }
      .title{ font-weight:700; letter-spacing:.4px; }

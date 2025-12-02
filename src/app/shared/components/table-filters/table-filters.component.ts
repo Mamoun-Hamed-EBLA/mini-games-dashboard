@@ -239,9 +239,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
       padding-top: 1rem;
       border-top: 1px solid var(--app-border, rgba(100,116,139,0.15));
     }
-    .filter-actions button {
-      background-color: #fff !important;
-    }
+   
     .filter-actions .mat-flat-button {
       background-color: var(--app-primary) !important;
       color: #fff !important;

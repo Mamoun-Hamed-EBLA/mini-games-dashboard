@@ -35,6 +35,24 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/games/games.component').then(m => m.GamesComponent),
       },
       {
+        path: 'badges',
+        canActivate: [authModeGuard],
+        data: { authMode: 'token' },
+        loadComponent: () => import('./pages/GameMechanics/badges.component').then(m => m.BadgesComponent),
+      },
+      {
+        path: 'card-backgrounds',
+        canActivate: [authModeGuard],
+        data: { authMode: 'token' },
+        loadComponent: () => import('./pages/GameMechanics/card-backgrounds.component').then(m => m.CardBackgroundsComponent),
+      },
+      {
+        path: 'rewards',
+        canActivate: [authModeGuard],
+        data: { authMode: 'token' },
+        loadComponent: () => import('./pages/GameMechanics/rewards.component').then(m => m.RewardsComponent),
+      },
+      {
         path: 'subscriptions',
         canActivate: [authModeGuard],
         data: { authMode: 'apiKey' },

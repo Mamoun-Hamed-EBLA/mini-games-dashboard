@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { SharedModule } from '../../shared.module';
 import { DynamicFormComponent, FormFieldConfig } from '../dynamic-form/dynamic-form.component';
@@ -9,6 +9,7 @@ export interface FormDialogData {
   config: FormFieldConfig[];
   value?: Record<string, any> | null;
   cols?: number;
+  closeOnSubmit?: boolean;
 }
 
 @Component({
@@ -39,11 +40,16 @@ export interface FormDialogData {
   ]
 })
 export class FormDialogComponent {
+  @Output() formSubmit = new EventEmitter<any>();
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: FormDialogData,
     private ref: MatDialogRef<FormDialogComponent>
   ) { }
   submit(result: any) {
-    this.ref.close(result);
+    this.formSubmit.emit(result);
+    if (this.data.closeOnSubmit !== false) {
+      this.ref.close(result);
+    }
   }
 }
