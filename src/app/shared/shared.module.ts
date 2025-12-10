@@ -56,6 +56,8 @@ import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.com
     MatGridListModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     MatRadioModule,
     MatSlideToggleModule,
     MatDatepickerModule,

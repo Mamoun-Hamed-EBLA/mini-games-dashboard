@@ -11,8 +11,8 @@ import { GameCriteria } from '../../core/models/page-criteria.models';
 import { FilterConfig } from '../../core/models/filter-config.model';
 import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
 import { PagedData } from '../../core/models/api-response.model';
-import { GameType } from './game-types.enum';
 import { FormFieldConfig } from '../../shared/components/dynamic-form/dynamic-form.component';
+import { MiniGameService } from '../../core/services/mini-game.service';
 
 @Component({
   selector: 'app-games',
@@ -58,6 +58,7 @@ export class GamesComponent {
   private gameService = inject(GameService);
   private dialog = inject(MatDialog);
   private notificationService = inject(NotificationService);
+  private miniGameService = inject(MiniGameService);
 
   currentCriteria = signal<GameCriteria>({});
   private criteriaSubject = new BehaviorSubject<GameCriteria>({});
@@ -143,17 +144,24 @@ export class GamesComponent {
     { columnDef: 'updatedBy', header: 'Updated By' },
   ];
 
-  constructor() {}
-  nameOptions = Object.values(GameType).map(value => ({ label: value, value: value }));
+  miniGameOptions: { label: string; value: string }[] = [];
 
-  columnsConfig:Signal<FormFieldConfig[]> = signal([
-        { name: 'name', label: 'Name', type: 'select', required: true, options: this.nameOptions },
-        { name: 'description', label: 'Description',required: true, type: 'textarea' },
-        { name: 'maxScore', label: 'Max Score', type: 'number', validators: [{ name: 'min', value: 0 }] },
-        { name: 'timeLimit', label: 'Time Limit (minutes)', type: 'number', validators: [{ name: 'min', value: 1 }] },
-        { name: 'isActive', label: 'Active', type: 'toggle', defaultValue: true },
-        { name: 'rules', label: 'Rules', type: 'textarea' },
-      ],)
+  constructor() {
+    this.miniGameService.lookup().subscribe(options => {
+      this.miniGameOptions = options;
+    });
+  }
+
+  get formConfig(): FormFieldConfig[] {
+    return [
+      { name: 'name', label: 'Mini Game', type: 'select', required: true, options: this.miniGameOptions },
+      { name: 'description', label: 'Description', required: true, type: 'textarea' },
+      { name: 'maxScore', label: 'Max Score', type: 'number', validators: [{ name: 'min', value: 0 }] },
+      { name: 'timeLimit', label: 'Time Limit (minutes)', type: 'number', validators: [{ name: 'min', value: 1 }] },
+      { name: 'isActive', label: 'Active', type: 'toggle', defaultValue: true },
+      { name: 'rules', label: 'Rules', type: 'textarea' },
+    ];
+  }
   onFiltersChanged(criteria: GameCriteria): void {
     this.currentCriteria.set(criteria);
     this.criteriaSubject.next(criteria);
@@ -162,7 +170,7 @@ export class GamesComponent {
     const data: FormDialogData = {
       title: 'Create Game',
       submitLabel: 'Create',
-      config: this.columnsConfig(),
+      config: this.formConfig,
     };
     this.dialog.open(FormDialogComponent, { data, width: '720px', maxWidth: '95vw' }).afterClosed().subscribe(result => {
       if (result) {
@@ -178,7 +186,7 @@ export class GamesComponent {
       title: 'Edit Game',
       submitLabel: 'Update',
       value: row,
-      config: this.columnsConfig(),
+      config: this.formConfig,
     };
     this.dialog.open(FormDialogComponent, { data, width: '720px', maxWidth: '95vw' }).afterClosed().subscribe(result => {
       if (result) {

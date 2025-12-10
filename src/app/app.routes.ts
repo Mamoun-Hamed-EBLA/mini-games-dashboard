@@ -65,6 +65,12 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/tenants/tenants.component').then(m => m.TenantsComponent),
       },
       {
+        path: 'mini-games',
+        canActivate: [authModeGuard],
+        data: { authMode: 'apiKey' },
+        loadComponent: () => import('./pages/mini-games/mini-games.component').then(m => m.MiniGamesComponent),
+      },
+      {
         path: 'sessions',
         canActivate: [authModeGuard],
         data: { authMode: 'token' },
@@ -75,6 +81,24 @@ export const routes: Routes = [
         canActivate: [authModeGuard],
         data: { authMode: 'token' },
         loadComponent: () => import('./pages/players/players.component').then(m => m.PlayersComponent),
+      },
+      {
+        path: 'reports/leaderboard',
+        canActivate: [authModeGuard],
+        data: { authMode: 'token' },
+        loadComponent: () => import('./pages/Reports/leaderboard.component').then(m => m.LeaderboardComponent),
+      },
+      {
+        path: 'reports/weekly-dashboard',
+        canActivate: [authModeGuard],
+        data: { authMode: 'token' },
+        loadComponent: () => import('./pages/Reports/weekly-dashboard.component').then(m => m.WeeklyDashboardComponent),
+      },
+      {
+        path: 'reports/game-leaderboard',
+        canActivate: [authModeGuard],
+        data: { authMode: 'token' },
+        loadComponent: () => import('./pages/Reports/game-leaderboard.component').then(m => m.GameLeaderboardComponent),
       },
       {
         path: 'users',

@@ -23,50 +23,74 @@ import { ShortcutService } from '../core/services/shortcut.service';
           <span>Mini Games Admin</span>
         </div>
         <mat-nav-list>
-          <a *ngIf="hasToken" mat-list-item class="nav-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeOnMobile()">
-            <mat-icon matListItemIcon>space_dashboard</mat-icon>
-            <div matListItemTitle>Dashboard</div>
-          </a>
-          <a *ngIf="hasToken" mat-list-item class="nav-link" routerLink="/games" routerLinkActive="active" (click)="closeOnMobile()">
-            <mat-icon matListItemIcon>sports_esports</mat-icon>
-            <div matListItemTitle>Games</div>
-          </a>
-          <a *ngIf="hasToken" mat-list-item class="nav-link" routerLink="/badges" routerLinkActive="active" (click)="closeOnMobile()">
-            <mat-icon matListItemIcon>emoji_events</mat-icon>
-            <div matListItemTitle>Badges</div>
-          </a>
-          <a *ngIf="hasToken" mat-list-item class="nav-link" routerLink="/card-backgrounds" routerLinkActive="active" (click)="closeOnMobile()">
-            <mat-icon matListItemIcon>image</mat-icon>
-            <div matListItemTitle>Card Backgrounds</div>
-          </a>
-          <a *ngIf="hasToken" mat-list-item class="nav-link" routerLink="/rewards" routerLinkActive="active" (click)="closeOnMobile()">
-            <mat-icon matListItemIcon>redeem</mat-icon>
-            <div matListItemTitle>Rewards</div>
-          </a>
-          <a *ngIf="hasApiKey" mat-list-item class="nav-link" routerLink="/subscriptions" routerLinkActive="active" (click)="closeOnMobile()">
-            <mat-icon matListItemIcon>vpn_key</mat-icon>
-            <div matListItemTitle>Subscriptions</div>
-          </a>
-          <a *ngIf="hasApiKey" mat-list-item class="nav-link" routerLink="/tenants" routerLinkActive="active" (click)="closeOnMobile()">
-            <mat-icon matListItemIcon>domain</mat-icon>
-            <div matListItemTitle>Tenants</div>
-          </a>
-          <a *ngIf="hasToken" mat-list-item class="nav-link" routerLink="/sessions" routerLinkActive="active" (click)="closeOnMobile()">
-            <mat-icon matListItemIcon>timer</mat-icon>
-            <div matListItemTitle>Sessions</div>
-          </a>
-          <a *ngIf="hasToken" mat-list-item class="nav-link" routerLink="/players" routerLinkActive="active" (click)="closeOnMobile()">
-            <mat-icon matListItemIcon>person</mat-icon>
-            <div matListItemTitle>Players</div>
-          </a>
-          <a *ngIf="hasToken" mat-list-item class="nav-link" routerLink="/users" routerLinkActive="active" (click)="closeOnMobile()">
-            <mat-icon matListItemIcon>group</mat-icon>
-            <div matListItemTitle>Users</div>
-          </a>
-          <a *ngIf="hasToken" mat-list-item class="nav-link" routerLink="/settings" routerLinkActive="active" (click)="closeOnMobile()">
-            <mat-icon matListItemIcon>settings</mat-icon>
-            <div matListItemTitle>Settings</div>
-          </a>
+          @if (hasToken) {
+            <a mat-list-item class="nav-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>space_dashboard</mat-icon>
+              <div matListItemTitle>Dashboard</div>
+            </a>
+            <a mat-list-item class="nav-link" routerLink="/games" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>sports_esports</mat-icon>
+              <div matListItemTitle>Games</div>
+            </a>
+            <a mat-list-item class="nav-link" routerLink="/badges" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>emoji_events</mat-icon>
+              <div matListItemTitle>Badges</div>
+            </a>
+            <a mat-list-item class="nav-link" routerLink="/card-backgrounds" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>image</mat-icon>
+              <div matListItemTitle>Card Backgrounds</div>
+            </a>
+            <a mat-list-item class="nav-link" routerLink="/rewards" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>redeem</mat-icon>
+              <div matListItemTitle>Rewards</div>
+            </a>
+          }
+
+          @if (hasApiKey) {
+            <a mat-list-item class="nav-link" routerLink="/subscriptions" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>vpn_key</mat-icon>
+              <div matListItemTitle>Subscriptions</div>
+            </a>
+            <a mat-list-item class="nav-link" routerLink="/tenants" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>domain</mat-icon>
+              <div matListItemTitle>Tenants</div>
+            </a>
+            <a mat-list-item class="nav-link" routerLink="/mini-games" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>extension</mat-icon>
+              <div matListItemTitle>Mini Games</div>
+            </a>
+          }
+
+          @if (hasToken) {
+            <a mat-list-item class="nav-link" routerLink="/sessions" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>timer</mat-icon>
+              <div matListItemTitle>Sessions</div>
+            </a>
+            <a mat-list-item class="nav-link" routerLink="/players" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>person</mat-icon>
+              <div matListItemTitle>Players</div>
+            </a>
+            <a mat-list-item class="nav-link" routerLink="/reports/leaderboard" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>leaderboard</mat-icon>
+              <div matListItemTitle>Leaderboard</div>
+            </a>
+            <a mat-list-item class="nav-link" routerLink="/reports/weekly-dashboard" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>calendar_today</mat-icon>
+              <div matListItemTitle>Weekly Dashboard</div>
+            </a>
+            <a mat-list-item class="nav-link" routerLink="/reports/game-leaderboard" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>sports_score</mat-icon>
+              <div matListItemTitle>Game Leaderboard</div>
+            </a>
+            <a mat-list-item class="nav-link" routerLink="/users" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>group</mat-icon>
+              <div matListItemTitle>Users</div>
+            </a>
+            <a mat-list-item class="nav-link" routerLink="/settings" routerLinkActive="active" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>settings</mat-icon>
+              <div matListItemTitle>Settings</div>
+            </a>
+          }
         </mat-nav-list>
       </mat-sidenav>
 
@@ -104,7 +128,7 @@ import { ShortcutService } from '../core/services/shortcut.service';
      .content{ padding:16px; }
      .spacer{ flex:1 1 auto; }
      .menu-btn{ display:none; }
-     @media (max-width: 960px){
+     @media (max-width: 1400px){
        .menu-btn{display:inline-flex;}
        .sidenav{width:80vw; max-width:320px;}
        .content{padding:12px;}
