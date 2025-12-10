@@ -53,6 +53,12 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/game-mechanics/rewards.component').then(m => m.RewardsComponent),
       },
       {
+        path: 'daily-challenges',
+        canActivate: [authModeGuard],
+        data: { authMode: 'token' },
+        loadComponent: () => import('./pages/game-mechanics/daily-challenges.component').then(m => m.DailyChallengesComponent),
+      },
+      {
         path: 'subscriptions',
         canActivate: [authModeGuard],
         data: { authMode: 'apiKey' },
