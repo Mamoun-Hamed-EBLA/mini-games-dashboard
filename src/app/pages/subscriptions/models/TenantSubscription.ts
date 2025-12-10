@@ -1,4 +1,4 @@
-import { SubscriptionType } from "../../../core/enums/SubscriptionType";
+import { SubscriptionType } from "../enum/SubscriptionType";
 
 export class TenantSubscription {
     id!: string;

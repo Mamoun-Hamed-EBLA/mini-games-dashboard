@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ApiResponse } from '../../core/models/api-response.model';
-import { LeaderboardEntry } from '../../core/models/leaderboard.model';
-import { WeeklyScore } from '../../core/models/weekly-score.model';
+import { ApiResponse } from '../../../core/models/api-response.model';
+import { LeaderboardEntry } from '../models/leaderboard.model';
+import { WeeklyScore } from '../models/weekly-score.model';
+
 
 
 @Injectable({ providedIn: 'root' })

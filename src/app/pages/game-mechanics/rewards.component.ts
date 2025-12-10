@@ -4,18 +4,18 @@ import { DataTableComponent, ColumnDef } from '../../shared/components/data-tabl
 import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
-import { Reward } from '../../core/models/reward.model';
-import { RewardService } from '../../core/services/reward.service';
-import { BadgeService } from '../../core/services/badge.service';
-import { CardBackgroundService } from '../../core/services/card-background.service';
+import { RewardService } from './services/reward.service';
+import { BadgeService } from './services/badge.service';
+import { CardBackgroundService } from './services/card-background.service';
 import { NotificationService } from '../../core/notifications/notification.service';
-import { RewardType } from '../../core/enums/RewardType';
-import { KeyType } from '../../core/enums/KeyType';
+import { RewardType } from './enums/RewardType';
 import { Observable, BehaviorSubject, switchMap, map, catchError, of, shareReplay } from 'rxjs';
 import { BaseCriteria } from '../../core/models/base-criteria.model';
 import { FilterConfig } from '../../core/models/filter-config.model';
 import { PagedData } from '../../core/models/api-response.model';
 import { FormFieldConfig } from '../../shared/components/dynamic-form/dynamic-form.component';
+import { Reward } from './models/reward.model';
+import { KeyType } from '../../core/enums/KeyType';
 
 interface RewardCriteria extends BaseCriteria {
   rewardType?: RewardType;

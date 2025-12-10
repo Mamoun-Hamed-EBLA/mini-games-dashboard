@@ -1,6 +1,7 @@
-import { BaseModel } from './base-model';
-import { RewardType } from '../enums/RewardType';
-import { KeyType } from '../enums/KeyType';
+import { KeyType } from "../../../core/enums/KeyType";
+import { BaseModel } from "../../../core/models/base-model";
+import { RewardType } from "../enums/RewardType";
+
 
 export interface Reward extends BaseModel {
   name: string;

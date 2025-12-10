@@ -1,5 +1,5 @@
-import { GameStatus } from '../enums/GameStatus';
-import { BaseModel } from './base-model';
+import { GameStatus } from './GameStatus';
+import { BaseModel } from '../../core/models/base-model';
 
 export interface GameSession extends BaseModel{
   playerId: string;

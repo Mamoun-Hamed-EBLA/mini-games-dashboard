@@ -3,15 +3,15 @@ import { SharedModule } from '../../shared/shared.module';
 import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
-import { Tenant } from '../../core/models/tenant.model';
-import { TenantService } from '../../core/services/tenant.service';
-import { SubscriptionService } from '../../core/services/subscription.service';
+import { TenantService } from './tenant.service';
+import { SubscriptionService } from '../subscriptions/services/subscription.service';
 import { NotificationService } from '../../core/notifications/notification.service';
 import { Observable, switchMap, BehaviorSubject, map } from 'rxjs';
 import { TenantCriteria } from '../../core/models/page-criteria.models';
 import { FilterConfig } from '../../core/models/filter-config.model';
 import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
 import { PagedData } from '../../core/models/api-response.model';
+import { Tenant } from './tenant.model';
 
 @Component({
   selector: 'app-tenants',

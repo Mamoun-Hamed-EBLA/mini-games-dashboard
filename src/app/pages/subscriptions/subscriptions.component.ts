@@ -3,12 +3,12 @@ import { SharedModule } from '../../shared/shared.module';
 import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
-import { SubscriptionService } from '../../core/services/subscription.service';
+import { SubscriptionService } from './services/subscription.service';
 import { NotificationService } from '../../core/notifications/notification.service';
 import { Observable } from 'rxjs';
-import { SubscriptionType } from '../../core/enums/SubscriptionType';
-import { TenantSubscription } from '../../core/models/tenant-subscription.model';
 import { FormFieldConfig } from '../../shared/components/dynamic-form/dynamic-form.component';
+import { SubscriptionType } from './enum/SubscriptionType';
+import { TenantSubscription } from './models/tenantSubscription';
 
 @Component({
   selector: 'app-subscriptions',

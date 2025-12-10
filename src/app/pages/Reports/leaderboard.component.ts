@@ -4,8 +4,8 @@ import { SharedModule } from '../../shared/shared.module';
 import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map, switchMap, startWith, debounceTime, distinctUntilChanged, shareReplay } from 'rxjs/operators';
-import { LeaderboardEntry } from '../../core/models/leaderboard.model';
-import { ScoreService } from './score.service';
+import { LeaderboardEntry } from './models/leaderboard.model';
+import { ScoreService } from './services/score.service';
 
 interface LeaderboardRow extends LeaderboardEntry {
   rank: number;

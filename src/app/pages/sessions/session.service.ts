@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { GameSession } from '../models/session.model';
-import { SessionCriteria } from '../models/page-criteria.models';
-import { CriteriaNormalizerService } from './criteria-normalizer.service';
-import { PagedResponse, PagedData } from '../models/api-response.model';
-import { BaseCrudService } from './base-crud.service';
+import { GameSession } from './session.model';
+import { SessionCriteria } from '../../core/models/page-criteria.models';
+import { CriteriaNormalizerService } from '../../core/services/criteria-normalizer.service';
+import { PagedResponse, PagedData } from '../../core/models/api-response.model';
+import { BaseCrudService } from '../../core/services/base-crud.service';
 
 @Injectable({ providedIn: 'root' })
 export class SessionService extends BaseCrudService<GameSession, SessionCriteria> {

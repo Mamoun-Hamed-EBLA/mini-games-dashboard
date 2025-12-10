@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Badge } from '../models/badge.model';
-import { BaseCriteria } from '../models/base-criteria.model';
-import { CriteriaNormalizerService } from './criteria-normalizer.service';
-import { BaseCrudService } from './base-crud.service';
+import { BaseCriteria } from '../../../core/models/base-criteria.model';
+import { CriteriaNormalizerService } from '../../../core/services/criteria-normalizer.service';
+import { BaseCrudService } from '../../../core/services/base-crud.service';
 
 @Injectable({ providedIn: 'root' })
 export class BadgeService extends BaseCrudService<Badge, BaseCriteria> {

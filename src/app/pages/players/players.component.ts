@@ -3,14 +3,14 @@ import { SharedModule } from '../../shared/shared.module';
 import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
 import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Player } from '../../core/models/player.model';
+import { Player } from './player.model';
 import { Observable, BehaviorSubject, switchMap, map, catchError, of, shareReplay } from 'rxjs';
-import { PlayerService } from '../../core/services/player.service';
 import { NotificationService } from '../../core/notifications/notification.service';
 import { BaseCriteria } from '../../core/models/base-criteria.model';
 import { FilterConfig } from '../../core/models/filter-config.model';
 import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
 import { PagedData } from '../../core/models/api-response.model';
+import { PlayerService } from './player.service';
 
 @Component({
   selector: 'app-players',

@@ -1,12 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { debounceTime, distinctUntilChanged, map, Observable, shareReplay, startWith, switchMap } from 'rxjs';
+import { WeeklyScore } from './models/weekly-score.model';
+import { ColumnDef, DataTableComponent } from '../../shared/components/data-table/data-table.component';
 import { SharedModule } from '../../shared/shared.module';
-import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
-import { Observable } from 'rxjs';
-import { map, switchMap, startWith, debounceTime, distinctUntilChanged, shareReplay } from 'rxjs';
-import { WeeklyScore } from '../../core/models/weekly-score.model';
-import { ScoreService } from './score.service';
-import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { ScoreService } from './services/score.service';
 
 interface WeeklyRow extends WeeklyScore {
   rank: number;

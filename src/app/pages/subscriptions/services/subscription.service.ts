@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { TenantSubscription } from '../models/tenant-subscription.model';
-import { BaseCrudService } from './base-crud.service';
+import { BaseCrudService } from '../../../core/services/base-crud.service';
+import { TenantSubscription } from '../models/tenantSubscription';
 
 @Injectable({ providedIn: 'root' })
 export class SubscriptionService extends BaseCrudService<TenantSubscription, void, TenantSubscription[]> {

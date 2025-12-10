@@ -4,10 +4,10 @@ import { SharedModule } from '../../shared/shared.module';
 import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map, switchMap, startWith, debounceTime, distinctUntilChanged, shareReplay } from 'rxjs';
-import { LeaderboardEntry } from '../../core/models/leaderboard.model';
-import { Game } from '../../core/models/game.model';
-import { ScoreService } from './score.service';
-import { GameService } from '../../core/services/game.service';
+import { LeaderboardEntry } from './models/leaderboard.model';
+import { Game } from '../game/game.model';
+import { GameService } from '../game/game.service';
+import { ScoreService } from './services/score.service';
 
 interface GameLeaderboardRow extends LeaderboardEntry {
   rank: number;

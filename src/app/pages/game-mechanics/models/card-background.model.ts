@@ -1,4 +1,4 @@
-import { BaseModel } from './base-model';
+import { BaseModel } from '../../../core/models/base-model';
 
 export interface CardBackground extends BaseModel {
   name: string;

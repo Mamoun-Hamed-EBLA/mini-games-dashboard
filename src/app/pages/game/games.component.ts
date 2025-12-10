@@ -3,16 +3,16 @@ import { SharedModule } from '../../shared/shared.module';
 import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
-import { Game } from '../../core/models/game.model';
+import { Game } from './game.model';
 import { Observable, switchMap, BehaviorSubject, map, shareReplay } from 'rxjs';
-import { GameService } from '../../core/services/game.service';
+import { GameService } from './game.service';
 import { NotificationService } from '../../core/notifications/notification.service';
 import { GameCriteria } from '../../core/models/page-criteria.models';
 import { FilterConfig } from '../../core/models/filter-config.model';
 import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
 import { PagedData } from '../../core/models/api-response.model';
 import { FormFieldConfig } from '../../shared/components/dynamic-form/dynamic-form.component';
-import { MiniGameService } from '../../core/services/mini-game.service';
+import { MiniGameService } from '../mini-games/mini-game.service';
 
 @Component({
   selector: 'app-games',

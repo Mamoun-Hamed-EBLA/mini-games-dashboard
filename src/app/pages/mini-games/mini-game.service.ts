@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { MiniGame } from '../models/mini-game.model';
-import { BaseCrudService } from './base-crud.service';
+import { MiniGame } from './mini-game.model';
+import { BaseCrudService } from '../../core/services/base-crud.service';
 
 @Injectable({ providedIn: 'root' })
 export class MiniGameService extends BaseCrudService<MiniGame, void, MiniGame[]> {
