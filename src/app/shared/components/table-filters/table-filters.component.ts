@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -17,7 +17,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
   selector: 'app-table-filters',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -26,8 +25,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatExpansionModule,
-  ],
+    MatExpansionModule
+],
   template: `
     <div class="filters-container">
       <form [formGroup]="filterForm">

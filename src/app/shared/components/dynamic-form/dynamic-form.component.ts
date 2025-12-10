@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -43,7 +43,6 @@ export interface FormFieldConfig {
   selector: 'app-dynamic-form',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -53,8 +52,8 @@ export interface FormFieldConfig {
     MatRadioModule,
     MatSlideToggleModule,
     MatDatepickerModule,
-    MatNativeDateModule,
-  ],
+    MatNativeDateModule
+],
   template: `
     <form class="dynamic-form" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="grid" [style.grid-template-columns]="'repeat(' + cols + ', minmax(0,1fr))'">
@@ -62,37 +61,41 @@ export interface FormFieldConfig {
           @if (computeVisible(fieldConfig)) {
             <div class="grid-item" [style.grid-column]="'span ' + (fieldConfig.colSpan || 1)">
               @switch (fieldConfig.type) {
-
+    
                 @case ('text') {
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ fieldConfig.label }}</mat-label>
                     <input matInput [formControlName]="fieldConfig.name" />
-                    <mat-hint *ngIf="fieldConfig.hint">{{ fieldConfig.hint }}</mat-hint>
+                    @if (fieldConfig.hint) {
+                      <mat-hint>{{ fieldConfig.hint }}</mat-hint>
+                    }
                   </mat-form-field>
                 }
-
+    
                 @case ('number') {
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ fieldConfig.label }}</mat-label>
                     <input matInput type="number" [formControlName]="fieldConfig.name" />
-                    <mat-hint *ngIf="fieldConfig.hint">{{ fieldConfig.hint }}</mat-hint>
+                    @if (fieldConfig.hint) {
+                      <mat-hint>{{ fieldConfig.hint }}</mat-hint>
+                    }
                   </mat-form-field>
                 }
-
+    
                 @case ('password') {
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ fieldConfig.label }}</mat-label>
                     <input matInput type="password" [formControlName]="fieldConfig.name" />
                   </mat-form-field>
                 }
-
+    
                 @case ('email') {
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ fieldConfig.label }}</mat-label>
                     <input matInput type="email" [formControlName]="fieldConfig.name" />
                   </mat-form-field>
                 }
-
+    
                 @case ('select') {
                   <div class="full-width ng-select-wrapper">
                     <label class="ng-select-label">{{ fieldConfig.label }}</label>
@@ -106,21 +109,23 @@ export interface FormFieldConfig {
                     </ng-select>
                   </div>
                 }
-
+    
                 @case ('checkbox') {
                   <mat-checkbox [formControlName]="fieldConfig.name">{{ fieldConfig.label }}</mat-checkbox>
                 }
-
+    
                 @case ('radio') {
                   <mat-radio-group [formControlName]="fieldConfig.name" class="radio-group">
-                    <mat-radio-button *ngFor="let option of fieldConfig.options || []" [value]="option.value">{{ option.label }}</mat-radio-button>
+                    @for (option of fieldConfig.options || []; track option) {
+                      <mat-radio-button [value]="option.value">{{ option.label }}</mat-radio-button>
+                    }
                   </mat-radio-group>
                 }
-
+    
                 @case ('toggle') {
                   <mat-slide-toggle [formControlName]="fieldConfig.name">{{ fieldConfig.label }}</mat-slide-toggle>
                 }
-
+    
                 @case ('date') {
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ fieldConfig.label }}</mat-label>
@@ -128,21 +133,21 @@ export interface FormFieldConfig {
                     <mat-datepicker #picker></mat-datepicker>
                   </mat-form-field>
                 }
-
+    
                 @case ('textarea') {
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ fieldConfig.label }}</mat-label>
                     <textarea matInput rows="4" [formControlName]="fieldConfig.name"></textarea>
                   </mat-form-field>
                 }
-
+    
               }
             </div>
           }
         }
       </div>
     </form>
-  `,
+    `,
   styles: [
     `.dynamic-form{ display:flex; flex-direction:column; gap:16px; }`,
     `.grid{ display:grid; gap:16px; }`,

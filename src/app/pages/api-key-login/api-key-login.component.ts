@@ -25,8 +25,12 @@ import { NotificationService } from '../../core/notifications/notification.servi
               <input matInput formControlName="apiKey" placeholder="Paste your API key" />
             </mat-form-field>
             <button mat-flat-button color="primary" class="full-width action" [disabled]="form.invalid || loading">
-              <mat-progress-spinner *ngIf="loading" mode="indeterminate" diameter="18"></mat-progress-spinner>
-              <span *ngIf="!loading">Continue</span>
+              @if (loading) {
+                <mat-progress-spinner mode="indeterminate" diameter="18"></mat-progress-spinner>
+              }
+              @if (!loading) {
+                <span>Continue</span>
+              }
             </button>
           </form>
         </mat-card-content>
@@ -35,7 +39,7 @@ import { NotificationService } from '../../core/notifications/notification.servi
         </mat-card-actions>
       </mat-card>
     </div>
-  `,
+    `,
   styles: [
     `.login-wrapper{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:
         radial-gradient(600px 200px at 20% -10%, rgba(37,99,235,.08), transparent),

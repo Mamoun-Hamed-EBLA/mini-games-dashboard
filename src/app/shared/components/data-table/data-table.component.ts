@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -24,7 +24,7 @@ export interface PaginationInfo {
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatIconModule, MatButtonModule],
+  imports: [MatTableModule, MatPaginatorModule, MatSortModule, MatIconModule, MatButtonModule],
   template: `
     <div class="table-wrapper">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z1 full-width">

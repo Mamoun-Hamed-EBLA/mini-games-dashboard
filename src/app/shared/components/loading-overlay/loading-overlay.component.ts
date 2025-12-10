@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { debounceTime, Subject, Subscription, takeUntil } from 'rxjs';
 import { LoaderService } from '../../../core/services/loader.service';
 
 @Component({
   selector: 'app-loading-overlay',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
   @if(loading()){
     <div class="overlay">
