@@ -1,4 +1,3 @@
-
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -41,12 +40,22 @@ export interface PaginationInfo {
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef class="actions-col">Actions</th>
             <td mat-cell *matCellDef="let row" class="actions-col">
-              <button mat-icon-button color="primary" (click)="onEdit(row); $event.stopPropagation()">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button color="warn" (click)="onDelete(row); $event.stopPropagation()">
-                <mat-icon>delete</mat-icon>
-              </button>
+              @if (actionMode === 'add') {
+                <button mat-icon-button color="primary" (click)="onAdd(row); $event.stopPropagation()">
+                  <mat-icon>add</mat-icon>
+                </button>
+              } @else if (actionMode === 'action') {
+                <button mat-icon-button color="primary" (click)="onAction(row); $event.stopPropagation()">
+                  <mat-icon>bolt</mat-icon>
+                </button>
+              } @else {
+                <button mat-icon-button color="primary" (click)="onEdit(row); $event.stopPropagation()">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="onDelete(row); $event.stopPropagation()">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
             </td>
           </ng-container>
         }
@@ -91,10 +100,13 @@ export class DataTableComponent<T = any> implements OnChanges, AfterViewInit {
   @Input() columns: ColumnDef<T>[] = [];
   @Input() data: T[] = [];
   @Input() actions = false;
+  @Input() actionMode: 'crud' | 'add' | 'action' = 'crud';
   @Input() paginationInfo: PaginationInfo | null = null;
   @Output() rowClick = new EventEmitter<T>();
   @Output() edit = new EventEmitter<T>();
   @Output() remove = new EventEmitter<T>();
+  @Output() add = new EventEmitter<T>();
+  @Output() action = new EventEmitter<T>();
 
   Math = Math;
 
@@ -132,4 +144,6 @@ export class DataTableComponent<T = any> implements OnChanges, AfterViewInit {
 
   onEdit(row: T) { this.edit.emit(row); }
   onDelete(row: T) { this.remove.emit(row); }
+  onAdd(row: T) { this.add.emit(row); }
+  onAction(row: T) { this.action.emit(row); }
 }

@@ -1,0 +1,15 @@
+export enum Country {
+  Suadi_Arabia = 2,
+  Jordan = 15,
+  Kuwait = 16,
+  Emirates = 18,
+  Lebanon = 20,
+  Oman = 21,
+  Morocco = 22,
+  Test_Country = 23,
+  Egypt = 24,
+  Global = 25,
+  Iraq = 26,
+  Iraq_IQD = 27,
+  Bahrain = 28,
+}

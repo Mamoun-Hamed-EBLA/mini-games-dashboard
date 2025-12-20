@@ -35,6 +35,30 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/game/games.component').then(m => m.GamesComponent),
       },
       {
+        path: 'store/products',
+        canActivate: [authModeGuard],
+        data: { authMode: 'token' },
+        loadComponent: () => import('./pages/store/store-products.component').then(m => m.StoreProductsComponent),
+      },
+      {
+        path: 'store/likecards-products',
+        canActivate: [authModeGuard],
+        data: { authMode: 'token' },
+        loadComponent: () => import('./pages/store/likecards-products.component').then(m => m.LikeCardsProductsComponent),
+      },
+      {
+        path: 'store/likecards-orders',
+        canActivate: [authModeGuard],
+        data: { authMode: 'token' },
+        loadComponent: () => import('./pages/store/likecards-orders.component').then(m => m.LikeCardsOrdersComponent),
+      },
+      {
+        path: 'store/product-serials',
+        canActivate: [authModeGuard],
+        data: { authMode: 'token' },
+        loadComponent: () => import('./pages/store/product-serials.component').then(m => m.ProductSerialsComponent),
+      },
+      {
         path: 'badges',
         canActivate: [authModeGuard],
         data: { authMode: 'token' },
@@ -57,6 +81,12 @@ export const routes: Routes = [
         canActivate: [authModeGuard],
         data: { authMode: 'token' },
         loadComponent: () => import('./pages/game-mechanics/daily-challenges.component').then(m => m.DailyChallengesComponent),
+      },
+      {
+        path: 'daily-quests',
+        canActivate: [authModeGuard],
+        data: { authMode: 'token' },
+        loadComponent: () => import('./pages/game-mechanics/daily-quests.component').then(m => m.DailyQuestsComponent),
       },
       {
         path: 'subscriptions',

@@ -56,7 +56,10 @@ $custom-accent: (
     900: #fff,
   )
 );
-
+:root{
+  --mat-datepicker-calendar-container-background-color: #f1f5f9;
+  --mat-datepicker-calendar-date-selected-state-text-color:#8b5e35
+}
 html {
   @include mat.theme(
     (

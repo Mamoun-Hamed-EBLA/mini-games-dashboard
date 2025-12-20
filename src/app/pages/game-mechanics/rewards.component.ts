@@ -159,7 +159,7 @@ export class RewardsComponent {
         { name: 'quantity', label: 'Quantity', type: 'number', validators: [{ name: 'min', value: 1 }],
           visible: v => {
             const t = v['rewardType'];
-            return t === RewardType.Gems || t === RewardType.LikeCard || t === RewardType.Key;
+            return t === RewardType.GemsPack || t === RewardType.LikeCard || t === RewardType.Key;
           },
         },
         { name: 'badgeId', label: 'Badge', type: 'select', options: [],
@@ -177,7 +177,7 @@ export class RewardsComponent {
           visible: v => v['rewardType'] === RewardType.Key,
         },
         { name: 'expiresAt', label: 'Expires At', type: 'date',
-          visible: v => v['rewardType'] === RewardType.Key || v['rewardType'] === RewardType.Gems,
+          visible: v => v['rewardType'] === RewardType.Key || v['rewardType'] === RewardType.GemsPack,
         },
         { name: 'isActive', label: 'Active', type: 'toggle', defaultValue: true },
       ]);
@@ -291,7 +291,7 @@ export class RewardsComponent {
     payload.resourceUrl = null;
     payload.keyType = null;
 
-    if (rewardType === RewardType.Gems || rewardType === RewardType.LikeCard) {
+    if (rewardType === RewardType.GemsPack || rewardType === RewardType.LikeCard) {
       payload.quantity = payload.quantity ?? null;
     } else if (rewardType === RewardType.Badge) {
       // if not selected or empty string, send null

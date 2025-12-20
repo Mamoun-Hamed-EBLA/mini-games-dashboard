@@ -130,6 +130,7 @@ export interface FormFieldConfig {
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>{{ fieldConfig.label }}</mat-label>
                     <input matInput [matDatepicker]="picker" [formControlName]="fieldConfig.name" />
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                   </mat-form-field>
                 }
