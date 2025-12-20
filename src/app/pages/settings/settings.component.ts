@@ -25,16 +25,16 @@ export class SettingsComponent {
     { name: 'itemsPerPage', label: 'Items Per Page', type: 'number', required: true, hint: 'Between 5 and 100', validators: [ { name: 'min', value: 5 }, { name: 'max', value: 100 } ] },
     { name: 'enableEmail', label: 'Enable Email Notifications', type: 'checkbox', defaultValue: true },
     { name: 'supportEmail', label: 'Support Email', type: 'email', validators: ['email', 'required'], visible: (v) => !!v['enableEmail'] },
-    { name: 'theme', label: 'Theme', type: 'radio', defaultValue: 'dark', options: [ { label: 'Dark', value: 'dark' }, { label: 'Light', value: 'light' } ] },
+    { name: 'theme', label: 'Theme', type: 'radio', defaultValue: 'dark', options: [ { name: 'Dark', id: 'dark' }, { name: 'Light', id: 'light' } ] },
     { name: 'maintenanceDate', label: 'Maintenance Date', type: 'date' },
     { name: 'enableLeaderboards', label: 'Enable Leaderboards', type: 'toggle', defaultValue: true },
-    { name: 'leaderboardVisibility', label: 'Leaderboard Visibility', type: 'select', defaultValue: 'global', options: [ { label: 'Global', value: 'global' }, { label: 'Friends Only', value: 'friends' }, { label: 'Hidden', value: 'none' } ], disabled: (v) => !v['enableLeaderboards'] },
+    { name: 'leaderboardVisibility', label: 'Leaderboard Visibility', type: 'select', defaultValue: 'global', options: [ { name: 'Global', id: 'global' }, { name: 'Friends Only', id: 'friends' }, { name: 'Hidden', id: 'none' } ], disabled: (v) => !v['enableLeaderboards'] },
     { name: 'visiblePanels', label: 'Visible Panels', type: 'select', multiple: true, defaultValue: ['dashboard', 'games', 'sessions'], options: [
-      { label: 'Dashboard', value: 'dashboard' },
-      { label: 'Games', value: 'games' },
-      { label: 'Sessions', value: 'sessions' },
-      { label: 'Users', value: 'users' },
-      { label: 'Settings', value: 'settings' },
+      { name: 'Dashboard', id: 'dashboard' },
+      { name: 'Games', id: 'games' },
+      { name: 'Sessions', id: 'sessions' },
+      { name: 'Users', id: 'users' },
+      { name: 'Settings', id: 'settings' },
     ]},
   ];
 

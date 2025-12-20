@@ -113,9 +113,9 @@ export class RewardsComponent {
     searchPlaceholder: 'Search rewards...',
     showSort: true,
     sortOptions: [
-      { label: 'Name', value: 'name' },
-      { label: 'Reward Type', value: 'rewardType' },
-      { label: 'Created Date', value: 'createdAt' },
+      { name: 'Name', id: 'name' },
+      { name: 'Reward Type', id: 'rewardType' },
+      { name: 'Created Date', id: 'createdAt' },
     ],
     showDateFilters: true,
     customFields: [
@@ -125,7 +125,7 @@ export class RewardsComponent {
         type: 'select',
         options: Object.keys(RewardType)
           .filter(k => isNaN(Number(k)))
-          .map(k => ({ label: k, value: (RewardType as any)[k] })),
+          .map(k => ({ name: k, id: (RewardType as any)[k] })),
       },
       {
         name: 'isActive',
@@ -190,7 +190,7 @@ export class RewardsComponent {
         return of({ items: [], pageNumber: 1, pageSize: 10, totalCount: 0, totalPages: 0, hasPreviousPage: false, hasNextPage: false });
       })
     ).subscribe(badges => {
-      const options = badges.items.map(b => ({ label: b.name, value: b.id }));
+      const options = badges.items.map(b => ({ name: b.name, id: b.id }));
       this.formFields.update(fields =>
         fields.map(field => field.name === 'badgeId' ? { ...field, options } : field)
       );
@@ -203,7 +203,7 @@ export class RewardsComponent {
         return of({ items: [], pageNumber: 1, pageSize: 10, totalCount: 0, totalPages: 0, hasPreviousPage: false, hasNextPage: false });
       })
     ).subscribe(cardBackgrounds => {
-      const options = cardBackgrounds.items.map(cb => ({ label: cb.name, value: cb.id }));
+      const options = cardBackgrounds.items.map(cb => ({ name: cb.name, id: cb.id }));
       this.formFields.update(fields =>
         fields.map(field => field.name === 'cardBackgroundId' ? { ...field, options } : field)
       );

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,12 +6,13 @@ import { FormDialogComponent, FormDialogData } from '../../shared/components/for
 import { TenantService } from './tenant.service';
 import { SubscriptionService } from '../subscriptions/services/subscription.service';
 import { NotificationService } from '../../core/notifications/notification.service';
-import { Observable, switchMap, BehaviorSubject, map } from 'rxjs';
+import { Observable, switchMap, BehaviorSubject, map, shareReplay, startWith } from 'rxjs';
 import { TenantCriteria } from '../../core/models/page-criteria.models';
 import { FilterConfig } from '../../core/models/filter-config.model';
 import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
 import { PagedData } from '../../core/models/api-response.model';
 import { Tenant } from './tenant.model';
+import { Lookup } from '../../core/models/lookup';
 
 @Component({
   selector: 'app-tenants',
@@ -53,7 +54,7 @@ import { Tenant } from './tenant.model';
      .spacer{ flex: 1 1 auto; }`
   ]
 })
-export class TenantsComponent {
+export class TenantsComponent implements OnInit {
   private tenantService = inject(TenantService);
   private dialog = inject(MatDialog);
   private notificationService = inject(NotificationService);
@@ -62,8 +63,13 @@ export class TenantsComponent {
   currentCriteria = signal<TenantCriteria>({});
   private criteriaSubject = new BehaviorSubject<TenantCriteria>({});
   
+  private subscriptions$ = this.subscriptionService.list().pipe(
+    shareReplay(1)
+  );
+
   pagedData$: Observable<PagedData<Tenant>> = this.criteriaSubject.pipe(
-    switchMap(criteria => this.tenantService.list(criteria))
+    switchMap(criteria => this.tenantService.list(criteria)),
+    shareReplay(1)
   );
 
   items$: Observable<Tenant[]> = this.pagedData$.pipe(
@@ -86,9 +92,9 @@ export class TenantsComponent {
     searchPlaceholder: 'Search tenants...',
     showSort: true,
     sortOptions: [
-      { label: 'Name', value: 'name' },
-      { label: 'Created Date', value: 'createdAt' },
-      { label: 'Updated Date', value: 'updatedAt' },
+      { name: 'Name', id: 'name' },
+      { name: 'Created Date', id: 'createdAt' },
+      { name: 'Updated Date', id: 'updatedAt' },
     ],
     showDateFilters: true,
     customFields: [
@@ -104,17 +110,13 @@ export class TenantsComponent {
   columns: ColumnDef<Tenant>[] = [
     { columnDef: 'name', header: 'Name' },
     { columnDef: 'description', header: 'Description' },
-    // { columnDef: 'subscriptionId', header: 'Subscription' },
-    // { columnDef: 'superAdminUsername', header: 'Admin Username' },
-    // { columnDef: 'superAdminEmail', header: 'Admin Email' },
   ];
 
-  subsOpts: { label: string; value: string }[] = [];
+  subsOpts: Lookup[] = [];
 
-  constructor() {
-    this.subscriptionService.list().subscribe(subscriptions => {
-      this.subsOpts = subscriptions.map(sub => ({ label: sub.name, value: sub.id }));
-      // Update filter config with subscription options
+  ngOnInit(): void {
+    this.subscriptions$.subscribe(subscriptions => {
+      this.subsOpts = subscriptions.map(sub => ({ id: sub.id, name: sub.name }));
       const subscriptionField = this.filterConfig.customFields?.find(f => f.name === 'subscriptionId');
       if (subscriptionField) {
         subscriptionField.options = this.subsOpts;
@@ -134,13 +136,13 @@ export class TenantsComponent {
       cols: 2,
       config: [
         { name: 'name', label: 'Name', type: 'text', required: true },
-        { name: 'description', label: 'Description', type: 'textarea', colSpan: 2 },
+        { name: 'currentSubscriptionId', label: 'Subscription', type: 'select', options: this.subsOpts },
         { name: 'databaseConnectionString', label: 'Database Connection String', type: 'text', colSpan: 2 },
-        { name: 'subscriptionId', label: 'Subscription', type: 'select', options: this.subsOpts },
         { name: 'superAdminUsername', label: 'Super Admin Username', type: 'text' },
         { name: 'superAdminEmail', label: 'Super Admin Email', type: 'email' },
         { name: 'superAdminPassword', label: 'Super Admin Password', type: 'password' },
         { name: 'superAdminFullName', label: 'Super Admin Full Name', type: 'text' },
+        { name: 'description', label: 'Description', type: 'textarea', colSpan: 2 },
       ],
     };
     this.dialog.open(FormDialogComponent, { data, width: '760px', maxWidth: '95vw' }).afterClosed().subscribe(result => {
@@ -158,15 +160,11 @@ export class TenantsComponent {
       submitLabel: 'Update',
       value: row,
       cols: 2,
-      config: [
+        config: [
         { name: 'name', label: 'Name', type: 'text', required: true },
-        { name: 'description', label: 'Description', type: 'textarea', colSpan: 2 },
+        { name: 'currentSubscriptionId', label: 'Subscription', type: 'select', options: this.subsOpts },
         { name: 'databaseConnectionString', label: 'Database Connection String', type: 'text', colSpan: 2 },
-        { name: 'subscriptionId', label: 'Subscription', type: 'select', options: this.subsOpts },
-        { name: 'superAdminUsername', label: 'Super Admin Username', type: 'text' },
-        { name: 'superAdminEmail', label: 'Super Admin Email', type: 'email' },
-        { name: 'superAdminPassword', label: 'Super Admin Password', type: 'password' },
-        { name: 'superAdminFullName', label: 'Super Admin Full Name', type: 'text' },
+        { name: 'description', label: 'Description', type: 'textarea', colSpan: 2 },
       ],
     };
     this.dialog.open(FormDialogComponent, { data, width: '760px', maxWidth: '95vw' }).afterClosed().subscribe(result => {

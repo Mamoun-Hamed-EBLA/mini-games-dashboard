@@ -18,7 +18,7 @@ export class MiniGameService extends BaseCrudService<MiniGame, void, MiniGame[]>
     );
   }
 
-  lookup(): Observable<{ label: string; value: string }[]> {
+  lookup(): Observable<{ id: string; name: string }[]> {
     return this.http.get<any>(this.endpoint+'/lookup').pipe(
       map(resp => (resp?.data ?? resp) )
     );

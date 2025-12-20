@@ -89,8 +89,8 @@ export class ProductSerialsComponent {
     searchPlaceholder: 'Search serials...',
     showSort: true,
     sortOptions: [
-      { label: 'Valid To', value: 'validTo' },
-      { label: 'Created Date', value: 'createdAt' },
+      { name: 'Valid To', id: 'validTo' },
+      { name: 'Created Date', id: 'createdAt' },
     ],
     showDateFilters: false,
     customFields: [

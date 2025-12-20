@@ -3,7 +3,11 @@ export interface Tenant {
   name: string;
   description?: string | null;
   databaseConnectionString?: string | null;
-  subscriptionId?: string | null;
+  isActive: boolean;
+  currentSubscriptionId?: string | null;
+  currentSubscriptionName?: string | null;
+  createdAt: string;
+  updatedAt?: string | null;
   superAdminUsername?: string | null;
   superAdminEmail?: string | null;
   superAdminPassword?: string | null;

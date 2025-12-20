@@ -14,6 +14,7 @@ import { PagedData } from '../../core/models/api-response.model';
 import { FormFieldConfig } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { Game } from '../game/game.model';
 import { GameService } from '../game/game.service';
+import { Lookup } from '../../core/models/lookup';
 
 interface CardBackgroundCriteria extends BaseCriteria {
   gameId?: string;
@@ -108,16 +109,16 @@ export class CardBackgroundsComponent {
     }))
   );
 
-  gameOptions: { label: string; value: string }[] = [];
+  gameOptions: Lookup[] = [];
 
   filterConfig: FilterConfig = {
     showSearch: true,
     searchPlaceholder: 'Search card backgrounds...',
     showSort: true,
     sortOptions: [
-      { label: 'Name', value: 'name' },
-      { label: 'Price', value: 'price' },
-      { label: 'Created Date', value: 'createdAt' },
+      { name: 'Name', id: 'name' },
+      { name: 'Price', id: 'price' },
+      { name: 'Created Date', id: 'createdAt' },
     ],
     showDateFilters: true,
     customFields: [
@@ -186,7 +187,7 @@ export class CardBackgroundsComponent {
         return of({ items: [], pageNumber: 1, pageSize: 10, totalCount: 0, totalPages: 0, hasPreviousPage: false, hasNextPage: false });
       })
     ).subscribe(games => {
-      const options = games.items.map((g: Game) => ({ label: g.name, value: g.id }));
+      const options = games.items.map((g: Game) => ({ name: g.name, id: g.id }));
 
       // Update form select options
       this.formFields.update((fields: FormFieldConfig[]) =>

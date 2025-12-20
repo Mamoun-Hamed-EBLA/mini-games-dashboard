@@ -19,7 +19,7 @@ export class AuthService {
     return !!this.getToken();
   }
 
-  isApiKeyAuthenticated(): boolean {
+isApiKeyAuthenticated(): boolean {    
     return !!this.getApiKey();
   }
 
@@ -47,7 +47,7 @@ export class AuthService {
     return localStorage.getItem(this.tenantKey);
   }
 
-  getApiKey(): string | null {
+  getApiKey(): string | null {    
     return localStorage.getItem(this.apiKeyKey);
   }
 

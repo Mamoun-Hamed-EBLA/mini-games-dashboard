@@ -16,6 +16,7 @@ import { FilterConfig } from '../../core/models/filter-config.model';
 import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
 import { PagedData } from '../../core/models/api-response.model';
 import { PlayerService } from '../players/player.service';
+import { Lookup } from '../../core/models/lookup';
 
 @Component({
   selector: 'app-sessions',
@@ -155,10 +156,10 @@ export class SessionsComponent {
     showSearch: false,
     showSort: true,
     sortOptions: [
-      { label: 'Started At', value: 'startedAt' },
-      { label: 'Ended At', value: 'endedAt' },
-      { label: 'Final Score', value: 'finalScore' },
-      { label: 'Status', value: 'status' },
+      { name: 'Started At', id: 'startedAt' },
+      { name: 'Ended At', id: 'endedAt' },
+      { name: 'Final Score', id: 'finalScore' },
+      { name: 'Status', id: 'status' },
     ],
     showDateFilters: false,
     customFields: [
@@ -217,12 +218,12 @@ export class SessionsComponent {
     { columnDef: 'updatedBy', header: 'Updated By' },
   ];
 
-  playersOpts: { label: string; value: string }[] = [];
-  gamesOpts: { label: string; value: string }[] = [];
+  playersOpts: Lookup[] = [];
+  gamesOpts: Lookup[] = [];
 
   constructor() {
     this.playerService.list().subscribe(pagedPlayers => {
-      this.playersOpts = pagedPlayers.items.map((p: Player) => ({ label: p.username, value: p.id }));
+      this.playersOpts = pagedPlayers.items.map((p: Player) => ({ name: p.username, id: p.id }));
       // Update filter config with player options
       const playerField = this.filterConfig.customFields?.find(f => f.name === 'playerId');
       if (playerField) {
@@ -236,7 +237,7 @@ export class SessionsComponent {
         return of({ items: [], pageNumber: 1, pageSize: 10, totalCount: 0, totalPages: 0, hasPreviousPage: false, hasNextPage: false });
       })
     ).subscribe(games => {
-      this.gamesOpts = games.items.map((g: Game) => ({ label: g.name, value: g.id }));
+      this.gamesOpts = games.items.map((g: Game) => ({ name: g.name, id: g.id }));
     });
   }
 

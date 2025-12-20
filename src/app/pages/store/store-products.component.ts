@@ -96,9 +96,9 @@ export class StoreProductsComponent {
     searchPlaceholder: 'Search products...',
     showSort: true,
     sortOptions: [
-      { label: 'Title', value: 'title' },
-      { label: 'Price', value: 'price' },
-      { label: 'Created Date', value: 'createdAt' },
+      { name: 'Title', id: 'title' },
+      { name: 'Price', id: 'price' },
+      { name: 'Created Date', id: 'createdAt' },
     ],
     showDateFilters: true,
     customFields: [

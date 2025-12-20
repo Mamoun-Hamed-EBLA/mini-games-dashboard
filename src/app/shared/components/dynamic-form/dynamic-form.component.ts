@@ -13,8 +13,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { Subscription } from 'rxjs';
 
 export interface FormFieldOption {
-  label: string;
-  value: any;
+  id: string;
+  name: string;
 }
 
 export type FieldType = 'text' | 'number' | 'password' | 'email' | 'select' | 'checkbox' | 'textarea' | 'radio' | 'toggle' | 'date';
@@ -101,8 +101,8 @@ export interface FormFieldConfig {
                     <label class="ng-select-label">{{ fieldConfig.label }}</label>
                     <ng-select
                       [items]="fieldConfig.options || []"
-                      bindLabel="label"
-                      bindValue="value"
+                      bindLabel="name"
+                      bindValue="id"
                       [multiple]="fieldConfig.multiple"
                       [placeholder]="fieldConfig.placeholder || 'Select'"
                       [formControlName]="fieldConfig.name">
@@ -117,7 +117,7 @@ export interface FormFieldConfig {
                 @case ('radio') {
                   <mat-radio-group [formControlName]="fieldConfig.name" class="radio-group">
                     @for (option of fieldConfig.options || []; track option) {
-                      <mat-radio-button [value]="option.value">{{ option.label }}</mat-radio-button>
+                      <mat-radio-button [value]="option.id">{{ option.name }}</mat-radio-button>
                     }
                   </mat-radio-group>
                 }
@@ -262,8 +262,10 @@ export class DynamicFormComponent implements OnChanges, OnDestroy {
   private normalizeField(field: FormFieldConfig): FormFieldConfig {
     if ((field.type === 'select' || field.type === 'radio') && !field.options && field.enumType) {
       const e = field.enumType;
-      const names = Object.keys(e).filter(k => isNaN(Number(k)));
-      const options = names.map(name => ({ label: name.replace(/_/g, ' '), value: Number(e[name]) }));
+      const options = Object.values(e).map((value: any) => ({
+        id: value,
+        name: value
+      }));
       return { ...field, options };
     }
     return field;

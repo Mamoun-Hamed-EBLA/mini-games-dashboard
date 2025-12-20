@@ -105,8 +105,8 @@ export class DailyQuestsComponent {
     searchPlaceholder: 'Search quests...',
     showSort: true,
     sortOptions: [
-      { label: 'Date', value: 'date' },
-      { label: 'Created Date', value: 'createdAt' },
+      { name: 'Date', id: 'date' },
+      { name: 'Created Date', id: 'createdAt' },
     ],
     showDateFilters: true,
   };

@@ -103,9 +103,9 @@ export class DailyChallengesComponent {
     searchPlaceholder: 'Search challenges...',
     showSort: true,
     sortOptions: [
-      { label: 'Name', value: 'name' },
-      { label: 'Start Time', value: 'startTime' },
-      { label: 'Created Date', value: 'createdAt' },
+      { name: 'Name', id: 'name' },
+      { name: 'Start Time', id: 'startTime' },
+      { name: 'Created Date', id: 'createdAt' },
     ],
     showDateFilters: true,
   };

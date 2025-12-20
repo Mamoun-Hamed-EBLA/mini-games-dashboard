@@ -88,10 +88,10 @@ export class GamesComponent {
     searchPlaceholder: 'Search games...',
     showSort: true,
     sortOptions: [
-      { label: 'Name', value: 'name' },
-      { label: 'Max Score', value: 'maxScore' },
-      { label: 'Time Limit', value: 'timeLimit' },
-      { label: 'Created Date', value: 'createdAt' },
+      { name: 'Name', id: 'name' },
+      { name: 'Max Score', id: 'maxScore' },
+      { name: 'Time Limit', id: 'timeLimit' },
+      { name: 'Created Date', id: 'createdAt' },
     ],
     showDateFilters: true,
     customFields: [
@@ -144,7 +144,7 @@ export class GamesComponent {
     { columnDef: 'updatedBy', header: 'Updated By' },
   ];
 
-  miniGameOptions: { label: string; value: string }[] = [];
+  miniGameOptions: { id: string; name: string }[] = [];
 
   constructor() {
     this.miniGameService.lookup().subscribe(options => {
@@ -155,10 +155,10 @@ export class GamesComponent {
   get formConfig(): FormFieldConfig[] {
     return [
       { name: 'name', label: 'Mini Game', type: 'select', required: true, options: this.miniGameOptions },
-      { name: 'description', label: 'Description', required: true, type: 'textarea' },
       { name: 'maxScore', label: 'Max Score', type: 'number', validators: [{ name: 'min', value: 0 }] },
       { name: 'timeLimit', label: 'Time Limit (minutes)', type: 'number', validators: [{ name: 'min', value: 1 }] },
       { name: 'isActive', label: 'Active', type: 'toggle', defaultValue: true },
+      { name: 'description', label: 'Description', required: true, type: 'textarea' },
       { name: 'rules', label: 'Rules', type: 'textarea' },
     ];
   }

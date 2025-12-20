@@ -59,7 +59,7 @@ export class LikeCardsOrdersComponent {
 
   statusOptions = Object.keys(LikeCardsOrderStatus)
     .filter(k => isNaN(Number(k)))
-    .map(k => ({ label: k, value: (LikeCardsOrderStatus as any)[k] as LikeCardsOrderStatus }));
+    .map(k => ({ name: k, id: (LikeCardsOrderStatus as any)[k] as LikeCardsOrderStatus }));
 
   pagedData$: Observable<PagedData<LikeCardsOrderDto>> = this.criteriaSubject.pipe(
     switchMap(criteria =>
@@ -100,8 +100,8 @@ export class LikeCardsOrdersComponent {
     searchPlaceholder: 'Search orders...',
     showSort: true,
     sortOptions: [
-      { label: 'Requested At', value: 'requestedAt' },
-      { label: 'Created Date', value: 'createdAt' },
+      { name: 'Requested At', id: 'requestedAt' },
+      { name: 'Created Date', id: 'createdAt' },
     ],
     showDateFilters: false,
     customFields: [

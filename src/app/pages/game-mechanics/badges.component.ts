@@ -103,8 +103,8 @@ export class BadgesComponent {
     searchPlaceholder: 'Search badges...',
     showSort: true,
     sortOptions: [
-      { label: 'Name', value: 'name' },
-      { label: 'Created Date', value: 'createdAt' },
+      { name: 'Name', id: 'name' },
+      { name: 'Created Date', id: 'createdAt' },
     ],
     showDateFilters: true,
     customFields: [

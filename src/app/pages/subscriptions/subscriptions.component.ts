@@ -61,7 +61,7 @@ export class SubscriptionsComponent {
         { name: 'durationInDays', label: 'Duration (days)', type: 'number', validators: [{ name: 'min', value: 1 }] },
         { name: 'maxPlayers', label: 'Max Players', type: 'number', validators: [{ name: 'min', value: 0 }] },
         { name: 'maxKeysPerMonth', label: 'Max Keys Per Month', type: 'number', validators: [{ name: 'min', value: 0 }] },
-        { name: 'type', label: 'Type', type: 'select', enumType: SubscriptionType, colSpan: 2 },
+        { name: 'type', label: 'Type', type: 'select', enumType: SubscriptionType},
         { name: 'description', label: 'Description', type: 'textarea', colSpan: 2 },
 
       ]);
