@@ -1,18 +1,18 @@
-import { Component, inject, Signal, signal } from '@angular/core';
-import { SharedModule } from '../../shared/shared.module';
-import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
+import { Component, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
-import { Game } from './game.model';
-import { Observable, switchMap, BehaviorSubject, map, shareReplay } from 'rxjs';
-import { GameService } from './game.service';
-import { NotificationService } from '../../core/notifications/notification.service';
-import { GameCriteria } from '../../core/models/page-criteria.models';
-import { FilterConfig } from '../../core/models/filter-config.model';
-import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
+import { BehaviorSubject, map, Observable, shareReplay, switchMap, take } from 'rxjs';
 import { PagedData } from '../../core/models/api-response.model';
+import { FilterConfig } from '../../core/models/filter-config.model';
+import { GameCriteria } from '../../core/models/page-criteria.models';
+import { NotificationService } from '../../core/notifications/notification.service';
+import { ColumnDef, DataTableComponent } from '../../shared/components/data-table/data-table.component';
 import { FormFieldConfig } from '../../shared/components/dynamic-form/dynamic-form.component';
+import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
+import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
+import { SharedModule } from '../../shared/shared.module';
 import { MiniGameService } from '../mini-games/mini-game.service';
+import { Game } from './game.model';
+import { GameService } from './game.service';
 
 @Component({
   selector: 'app-games',
@@ -147,7 +147,12 @@ export class GamesComponent {
   miniGameOptions: { id: string; name: string }[] = [];
 
   constructor() {
-    this.miniGameService.lookup().subscribe(options => {
+    this.miniGameService.lookup()
+    .pipe(
+      take(1),
+      map(options => options.map(option => ({ id: option.name, name: option.name })))
+    )
+    .subscribe(options => {
       this.miniGameOptions = options;
     });
   }
@@ -171,6 +176,7 @@ export class GamesComponent {
       title: 'Create Game',
       submitLabel: 'Create',
       config: this.formConfig,
+      cols:2
     };
     this.dialog.open(FormDialogComponent, { data, width: '720px', maxWidth: '95vw' }).afterClosed().subscribe(result => {
       if (result) {
@@ -187,6 +193,7 @@ export class GamesComponent {
       submitLabel: 'Update',
       value: row,
       config: this.formConfig,
+       cols:2
     };
     this.dialog.open(FormDialogComponent, { data, width: '720px', maxWidth: '95vw' }).afterClosed().subscribe(result => {
       if (result) {

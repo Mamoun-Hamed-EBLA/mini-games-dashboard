@@ -1,5 +1,6 @@
 export enum GameStatus {
-  Active = 0,
-  Completed = 1,
-  Abandoned = 2,
+    NotStarted = 0,
+    InProgress = 1,
+    Completed = 2,
+    Rejected = 3, // Game completion rejected due to validation failure
 }

@@ -1,18 +1,18 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { SharedModule } from '../../shared/shared.module';
-import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
-import { TenantService } from './tenant.service';
-import { SubscriptionService } from '../subscriptions/services/subscription.service';
-import { NotificationService } from '../../core/notifications/notification.service';
-import { Observable, switchMap, BehaviorSubject, map, shareReplay, startWith } from 'rxjs';
-import { TenantCriteria } from '../../core/models/page-criteria.models';
-import { FilterConfig } from '../../core/models/filter-config.model';
-import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
+import { BehaviorSubject, map, Observable, shareReplay, switchMap } from 'rxjs';
 import { PagedData } from '../../core/models/api-response.model';
-import { Tenant } from './tenant.model';
+import { FilterConfig } from '../../core/models/filter-config.model';
 import { Lookup } from '../../core/models/lookup';
+import { TenantCriteria } from '../../core/models/page-criteria.models';
+import { NotificationService } from '../../core/notifications/notification.service';
+import { ColumnDef, DataTableComponent } from '../../shared/components/data-table/data-table.component';
+import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
+import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
+import { SharedModule } from '../../shared/shared.module';
+import { SubscriptionService } from '../subscriptions/services/subscription.service';
+import { Tenant } from './tenant.model';
+import { TenantService } from './tenant.service';
 
 @Component({
   selector: 'app-tenants',

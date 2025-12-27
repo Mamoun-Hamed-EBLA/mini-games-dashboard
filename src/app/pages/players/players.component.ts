@@ -1,16 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
-import { SharedModule } from '../../shared/shared.module';
-import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
-import { FormDialogComponent, FormDialogData } from '../../shared/components/form-dialog/form-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-import { Player } from './player.model';
-import { Observable, BehaviorSubject, switchMap, map, catchError, of, shareReplay } from 'rxjs';
-import { NotificationService } from '../../core/notifications/notification.service';
+import { BehaviorSubject, catchError, map, Observable, of, shareReplay, switchMap } from 'rxjs';
+import { PagedData } from '../../core/models/api-response.model';
 import { BaseCriteria } from '../../core/models/base-criteria.model';
 import { FilterConfig } from '../../core/models/filter-config.model';
+import { NotificationService } from '../../core/notifications/notification.service';
+import { ColumnDef, DataTableComponent } from '../../shared/components/data-table/data-table.component';
 import { TableFiltersComponent } from '../../shared/components/table-filters/table-filters.component';
-import { PagedData } from '../../core/models/api-response.model';
+import { SharedModule } from '../../shared/shared.module';
+import { Player } from './player.model';
 import { PlayerService } from './player.service';
+import { DateUtilities } from '../../core/utils/date-utilities';
 
 @Component({
   selector: 'app-players',
@@ -21,10 +20,6 @@ import { PlayerService } from './player.service';
       <mat-toolbar color="primary">
         <span>Players</span>
         <span class="spacer"></span>
-        <button mat-raised-button color="accent" (click)="openCreate()">
-          <mat-icon>add</mat-icon>
-          New Player
-        </button>
       </mat-toolbar>
 
       <mat-card>
@@ -39,9 +34,7 @@ import { PlayerService } from './player.service';
             [columns]="columns" 
             [data]="(players$ | async) ?? []" 
             [paginationInfo]="(paginationInfo$ | async) ?? null"
-            [actions]="true"
-            (edit)="openEdit($event)" 
-            (remove)="deletePlayer($event)">
+            [actions]="false">
           </app-data-table>
         </mat-card-content>
       </mat-card>
@@ -54,7 +47,6 @@ import { PlayerService } from './player.service';
 })
 export class PlayersComponent {
   private playerService = inject(PlayerService);
-  private dialog = inject(MatDialog);
   private notificationService = inject(NotificationService);
 
   currentCriteria = signal<BaseCriteria>({});
@@ -116,11 +108,7 @@ export class PlayersComponent {
     { columnDef: 'countryCode', header: 'Country' },
     { columnDef: 'score', header: 'Score' },
     { columnDef: 'isActive', header: 'Active', cell: r => (r.isActive ? 'Yes' : 'No') },
-    { columnDef: 'lastLoginAt', header: 'Last Login', cell: r => r.lastLoginAt ? new Date(r.lastLoginAt).toLocaleString() : '-' },
-    { columnDef: 'createdAt', header: 'Created At', cell: r => new Date(r.createdAt).toLocaleString() },
-    { columnDef: 'createdBy', header: 'Created By' },
-    { columnDef: 'updatedAt', header: 'Updated At', cell: r => r.updatedAt ? new Date(r.updatedAt).toLocaleString() : '-' },
-    { columnDef: 'updatedBy', header: 'Updated By' },
+    { columnDef: 'lastLoginAt', header: 'Last Login', cell: r => DateUtilities.formatDateTime(r.lastLoginAt)},
   ];
 
   constructor() {}
@@ -130,56 +118,6 @@ export class PlayersComponent {
     this.criteriaSubject.next(criteria);
   }
 
-  openCreate() {
-    const data: FormDialogData = {
-      title: 'Create Player',
-      submitLabel: 'Create',
-      cols: 2,
-      config: [
-        { name: 'username', label: 'Username', type: 'text', required: true, colSpan: 2 },
-        { name: 'socialMediaId', label: 'Social Media Id', type: 'text' },
-        { name: 'countryCode', label: 'Country Code', type: 'text', hint: 'e.g., US, EG, FR' },
-        { name: 'icon', label: 'Icon', type: 'text' },
-        { name: 'frame', label: 'Frame', type: 'text' },
-        { name: 'score', label: 'Score', type: 'number', validators: [{ name: 'min', value: 0 }] },
-        { name: 'lastLoginAt', label: 'Last Login', type: 'date' },
-        { name: 'isActive', label: 'Active', type: 'toggle', defaultValue: true, colSpan: 2 },
-      ],
-    };
-    this.dialog.open(FormDialogComponent, { data, width: '720px', maxWidth: '95vw' }).afterClosed().subscribe(result => {
-      if (result) {
-        this.playerService.create(result).subscribe(() => {
-          this.notificationService.success('Player created');
-        });
-      }
-    });
-  }
-
-  openEdit(row: Player) {
-    const data: FormDialogData = {
-      title: 'Edit Player',
-      submitLabel: 'Update',
-      cols: 2,
-      value: row,
-      config: [
-        { name: 'username', label: 'Username', type: 'text', required: true, colSpan: 2 },
-        { name: 'socialMediaId', label: 'Social Media Id', type: 'text' },
-        { name: 'countryCode', label: 'Country Code', type: 'text' },
-        { name: 'icon', label: 'Icon', type: 'text' },
-        { name: 'frame', label: 'Frame', type: 'text' },
-        { name: 'score', label: 'Score', type: 'number', validators: [{ name: 'min', value: 0 }] },
-        { name: 'lastLoginAt', label: 'Last Login', type: 'date' },
-        { name: 'isActive', label: 'Active', type: 'toggle', colSpan: 2 },
-      ],
-    };
-    this.dialog.open(FormDialogComponent, { data, width: '720px', maxWidth: '95vw' }).afterClosed().subscribe(result => {
-      if (result) {
-        this.playerService.update(row.id, result).subscribe(() => {
-          this.notificationService.success('Player updated');
-        });
-      }
-    });
-  }
 
   deletePlayer(player: Player): void {
     if (confirm(`Delete player ${player.username}?`)) {

@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, shareReplay, startWith, switchMap } from 'rxjs/operators';
+import { ColumnDef, DataTableComponent } from '../../shared/components/data-table/data-table.component';
 import { SharedModule } from '../../shared/shared.module';
-import { DataTableComponent, ColumnDef } from '../../shared/components/data-table/data-table.component';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map, switchMap, startWith, debounceTime, distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { LeaderboardEntry } from './models/leaderboard.model';
 import { ScoreService } from './services/score.service';
 

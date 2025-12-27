@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
 export interface ColumnDef<T = any> {
-  columnDef: string;
+  columnDef: keyof T;
   header: string;
   cell?: (row: T) => string | number | boolean | null | undefined;
 }
@@ -28,7 +28,7 @@ export interface PaginationInfo {
     <div class="table-wrapper">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z1 full-width">
         @for (column of columns; track column.columnDef) {
-          <ng-container [matColumnDef]="column.columnDef">
+          <ng-container [matColumnDef]="column.columnDef.toString()">
             <th mat-header-cell *matHeaderCellDef>{{ column.header }}</th>
             <td mat-cell *matCellDef="let row" (click)="onRowClick(row)">
               {{ column.cell ? column.cell(row) : row[column.columnDef] }}
@@ -118,7 +118,7 @@ export class DataTableComponent<T = any> implements OnChanges, AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['columns']) {
-      this.displayedColumns = (this.columns || []).map(c => c.columnDef);
+      this.displayedColumns = (this.columns || []).map(c => c.columnDef.toString());
       if (this.actions) {
         this.displayedColumns = [...this.displayedColumns, 'actions'];
       }
@@ -128,7 +128,7 @@ export class DataTableComponent<T = any> implements OnChanges, AfterViewInit {
     }
     if (changes['actions'] && !changes['columns']) {
       // If actions toggled but columns not changed, adjust displayed columns
-      const base = (this.columns || []).map(c => c.columnDef);
+      const base = (this.columns || []).map(c => c.columnDef.toString());
       this.displayedColumns = this.actions ? [...base, 'actions'] : base;
     }
   }

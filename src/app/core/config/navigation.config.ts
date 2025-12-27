@@ -1,4 +1,4 @@
-import { NavItem, NavGroup, NavLink } from '../models/nav-item.model';
+import { NavItem } from '../models/nav-item.model';
 
 export const NAVIGATION_CONFIG: NavItem[] = [
   {

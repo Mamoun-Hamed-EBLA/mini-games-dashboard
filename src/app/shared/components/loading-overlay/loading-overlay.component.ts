@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 
-import { debounceTime, Subject, Subscription, takeUntil } from 'rxjs';
+import { debounceTime, Subject, takeUntil } from 'rxjs';
 import { LoaderService } from '../../../core/services/loader.service';
 
 @Component({

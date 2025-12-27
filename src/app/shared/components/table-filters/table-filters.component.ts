@@ -1,17 +1,17 @@
 import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
+import { MatButtonModule } from '@angular/material/button';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { FilterConfig, FilterFieldConfig } from '../../../core/models/filter-config.model';
-import { BaseCriteria } from '../../../core/models/base-criteria.model';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { BaseCriteria } from '../../../core/models/base-criteria.model';
+import { FilterConfig } from '../../../core/models/filter-config.model';
 
 @Component({
   selector: 'app-table-filters',
@@ -47,8 +47,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
               <mat-label>Sort By</mat-label>
               <mat-select formControlName="sortBy">
                 <mat-option [value]="null">None</mat-option>
-                @for (option of config.sortOptions; track option.value) {
-                  <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                @for (option of config.sortOptions; track option.id) {
+                  <mat-option [value]="option.id">{{ option.name }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
@@ -138,8 +138,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
                         <mat-label>{{ field.label }}</mat-label>
                         <mat-select [formControlName]="field.name">
                           <mat-option [value]="null">All</mat-option>
-                          @for (option of field.options || []; track option.value) {
-                            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                          @for (option of field.options || []; track option.id) {
+                            <mat-option [value]="option.id">{{ option.name }}</mat-option>
                           }
                         </mat-select>
                       </mat-form-field>

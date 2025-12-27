@@ -24,7 +24,10 @@ export interface SessionCriteria extends BaseCriteria {
   startedTo?: Date | string;
   endedFrom?: Date | string;
   endedTo?: Date | string;
+  minDuration?: number;
+  maxDuration?: number;
   playerId?: string;
+  status?: string;
 }
 
 export interface GameCriteria extends BaseCriteria {
